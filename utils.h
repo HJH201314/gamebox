@@ -65,19 +65,39 @@ void resetStrRight(char * str,char * ch){//清空原有文字并居右在str中�
     }
 }
 
-char* formatStrD(char * format, int count, ...){//直接返回格式化(仅%d)后的文本
-    static char show[wmax+1] = "";
+char* formatStrD(char * format, int count,...){//直接返回格式化(仅%d)后的文本
+    static char result[wmax+1] = "";
     va_list vaList;
-    /* 为 count 个参数初始化 valist */
-    va_start(vaList, count);
-    /* 访问所有赋给 valist 的参数 */
-    for (int i = 0; i < count; i++)
-    {
-        sprintf(show,format, va_arg(vaList,int));
-    }
-    /* 清理为 valist 保留的内存 */
+    va_start(vaList,count);
+    vsprintf(result, format,vaList);
     va_end(vaList);
-    return show;
+    return result;
 }
+
+char* connectStr(int count,...) {//将count个字符串拼接起来,最长不超过wmax
+    int i;
+    va_list vaList;
+    va_start(vaList,count);
+    static char result[wmax+1] = "";
+    for(i = 0; i < count; i++)
+        strcat(result, va_arg(vaList,char*));
+    va_end(vaList);
+    return result;
+}
+
+//char* formatStrD(char * format, int count, ...){//直接返回格式化(仅%d)后的文本
+//    static char show[wmax+1] = "";//防止内存泄露,用static
+//    va_list vaList;
+//    /* 为 count 个参数初始化 valist */
+//    va_start(vaList, count);
+//    /* 访问所有赋给 valist 的参数 */
+//    for (int i = 0; i < count; i++)
+//    {
+//        sprintf(show,format, va_arg(vaList,int));
+//    }
+//    /* 清理为 valist 保留的内存 */
+//    va_end(vaList);
+//    return show;
+//}
 
 #endif //BIGPROJECT_UTILS_H
