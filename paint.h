@@ -88,7 +88,7 @@ void setLineCenter(int line,char * ch) {//直接在某行中间输出
     setLine(line,str);
 }
 
-void setLineRight(int line,char * ch) {//直接在某行左侧输出
+void setLineRight(int line,char * ch) {//直接在某行右侧输出
     char str[wmax+1];
     initStrBlank(str,wmax);
     resetStrRight(str,ch);
@@ -97,7 +97,7 @@ void setLineRight(int line,char * ch) {//直接在某行左侧输出
 
 void output() {
     printf("%s",(char *)cWin);//将cWin数组输出
-    printf("\nPress Esc to exit.\n按Esc键退出.");
+    printf("\nPress Esc to exit.\n按Esc键退出或返回上一级.");
     gotoxy(0,0);
 }
 

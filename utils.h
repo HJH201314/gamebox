@@ -43,7 +43,7 @@ void setStrRight(char * str,char * ch){//居右在str中放置ch，注意str可�
     }
 }
 
-void resetStrCenter(char * str,char * ch){//清空原有文字并从from(>0)开始设置str的值，注意str可设置的范围不为\0即已经初始化
+void resetStrCenter(char * str,char * ch){//清空原有文字并居中在str中放置ch，注意str可设置的范围不为\0即已经初始化
     clearStr(str);
     int len_ch = (int)strlen(ch);
     int start = (wmax - len_ch) / 2;//start为数组下标开始处
@@ -65,13 +65,13 @@ void resetStrRight(char * str,char * ch){//清空原有文字并居右在str中�
     }
 }
 
-char* formatStrD(char * format,int arg_count,...){
+char* formatStrD(char * format, int count, ...){//直接返回格式化(仅%d)后的文本
     static char show[wmax+1] = "";
     va_list vaList;
-    /* 为 arg_count 个参数初始化 valist */
-    va_start(vaList,arg_count);
+    /* 为 count 个参数初始化 valist */
+    va_start(vaList, count);
     /* 访问所有赋给 valist 的参数 */
-    for (int i = 0; i < arg_count; i++)
+    for (int i = 0; i < count; i++)
     {
         sprintf(show,format, va_arg(vaList,int));
     }

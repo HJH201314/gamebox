@@ -5,7 +5,7 @@
 #ifndef BIGPROJECT_PAGEONE_H
 #define BIGPROJECT_PAGEONE_H
 
-#define TRYTIME_MAX 10
+#define TRYTIME_BASE_MAX 10//第一关的最大值
 
 void pageOne(){//Guess number
     buildFrame();
@@ -35,25 +35,25 @@ void pageOne(){//Guess number
                     input_num = atol(input_str);
                     if(input_num != 0){
                         if(input_num > random_num){
-                            setLineCenter(midline+2,"Too big!");
+                            setLineCenter(midline+2, formatStrD("%d is too big!",1,input_num));
                             try_times++;
                         } else if(input_num < random_num){
-                            setLineCenter(midline+2,"Too small!");
+                            setLineCenter(midline+2,formatStrD("%d is too small!",1,input_num));
                             try_times++;
                         } else {
-                            setLineCenter(midline+2,"Correct!");
-                            //
+                            setLineCenter(midline+2,"You are correct!!!");
+                            setLineCenter(midline+3,"Press Enter to continue...");
                         }
                         //清空输入的数字
                         memset(input_str,'\0',sizeof(input_str));
                         //错误达到上限
-                        if(try_times >= TRYTIME_MAX) {
+                        if(try_times >= TRYTIME_BASE_MAX) {
                             setLineCenter(midline+1, "YOU FAILED!");
                         }
                     }
                     break;
                 }
-                case '0'...'9': {
+                case '0'...'9': {//输入数字
                     char temp[2] = "";
                     temp[0] = (char) ch;
                     strcat(input_str, temp);
@@ -61,7 +61,7 @@ void pageOne(){//Guess number
                 }
             }
         }
-        setLineRight(2, formatStrD("You have tried %d times",1,try_times));
+        setLineRight(1, formatStrD("You have tried %d times",1,try_times));
         setLineCenter(midline, input_str);
 
         output();
