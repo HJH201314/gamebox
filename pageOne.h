@@ -5,51 +5,64 @@
 #ifndef BIGPROJECT_PAGEONE_H
 #define BIGPROJECT_PAGEONE_H
 
+#define TRYTIME_MAX 10
+
 void pageOne(){//Guess number
     buildFrame();
     int ch;
-    char input[wmax+1] = "";//即将输入的数字
-    long randomNum = rand()%101+1;//生成一个随机数
-    char randomStr[20];//随机数转成的字符串
-    ltoa(randomNum,randomStr,10);//转字符串
-    long inputNum;//输入"数字"转成的长整数
+    int midline = hmax / 2;//中间行
+    char input_str[wmax + 1] = "";//即将输入的数字
+    long random_num = rand() % 101 + 1;//生成一个随机数
+    char random_str[20];//随机数转成的字符串
+    ltoa(random_num, random_str, 10);//转字符串
+    long input_num;//输入"数字"转成的长整数
+    int try_times = 0;
     while(1){
-        setLineCenter(hmax/2-2,"Please guess a number:");
-        //setLineCenter(hmax/2-1, randomStr);
+        setLineCenter(midline - 2, "Please guess a number (and press Enter):");
+        //setLineCenter(hmax/2-1, random_str);
         if(_kbhit()) {//是否有按下键盘
             ch = _getch();//
             switch(ch){
                 case KEY_ESC:
                     return;
                 case KEY_BACK: {
-                    int len_input = (int)strlen(input);
+                    int len_input = (int)strlen(input_str);
                     if(len_input >= 1)
-                        input[len_input-1] = '\0';
+                        input_str[len_input - 1] = '\0';
                     break;
                 }
                 case KEY_ENTER: {
-                    inputNum = atol(input);
-                    if(inputNum != 0){
-                        if(inputNum>randomNum){
-                            setLineCenter(hmax/2+2,"Too big!");
-                        } else if(inputNum<randomNum){
-                            setLineCenter(hmax/2+2,"Too small!");
+                    input_num = atol(input_str);
+                    if(input_num != 0){
+                        if(input_num > random_num){
+                            setLineCenter(midline+2,"Too big!");
+                            try_times++;
+                        } else if(input_num < random_num){
+                            setLineCenter(midline+2,"Too small!");
+                            try_times++;
                         } else {
-                            setLineCenter(hmax/2+2,"Correct!");
+                            setLineCenter(midline+2,"Correct!");
+                            //
                         }
-
+                        //清空输入的数字
+                        memset(input_str,'\0',sizeof(input_str));
+                        //错误达到上限
+                        if(try_times >= TRYTIME_MAX) {
+                            setLineCenter(midline+1, "YOU FAILED!");
+                        }
                     }
                     break;
                 }
                 case '0'...'9': {
                     char temp[2] = "";
                     temp[0] = (char) ch;
-                    strcat(input, temp);
+                    strcat(input_str, temp);
                     break;
                 }
             }
         }
-        setLineCenter(hmax/2,input);
+        setLineRight(2, formatStrD("You have tried %d times",1,try_times));
+        setLineCenter(midline, input_str);
 
         output();
         Sleep(FREQ);

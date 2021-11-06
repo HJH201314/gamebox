@@ -23,6 +23,8 @@ process.h
 -
 string.h
 -
+stdarg.h
+-
 funtionList.h
 D:/Coding/C/bigproject/funtionList.h
 paint.h

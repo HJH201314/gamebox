@@ -12,6 +12,7 @@ void setStrCenter(char * str,char * ch);
 void setStrRight(char * str,char * ch);
 void resetStrCenter(char * str,char * ch);
 void resetStrRight(char * str,char * ch);
+char* formatStrD(char * format,int arg_count,...);
 
 void setLine(int line,char * ch);
 void setPoint(int x,int y,char ch);

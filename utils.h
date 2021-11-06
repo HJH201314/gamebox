@@ -65,4 +65,19 @@ void resetStrRight(char * str,char * ch){//清空原有文字并居右在str中�
     }
 }
 
+char* formatStrD(char * format,int arg_count,...){
+    static char show[wmax+1] = "";
+    va_list vaList;
+    /* 为 arg_count 个参数初始化 valist */
+    va_start(vaList,arg_count);
+    /* 访问所有赋给 valist 的参数 */
+    for (int i = 0; i < arg_count; i++)
+    {
+        sprintf(show,format, va_arg(vaList,int));
+    }
+    /* 清理为 valist 保留的内存 */
+    va_end(vaList);
+    return show;
+}
+
 #endif //BIGPROJECT_UTILS_H

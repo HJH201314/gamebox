@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <process.h>
 #include <string.h>
+#include <stdarg.h>
 
 #define FREQ 10//窗口刷新率
 #define KEY_BACK 8//Backspace的键值
