@@ -9,6 +9,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
   "D:/Coding/C/bigproject/main.c" "D:/Coding/C/bigproject/cmake-build-debug/CMakeFiles/bigproject.dir/main.c.obj"
+  "D:/Coding/C/bigproject/pageGluttonousSnake.c" "D:/Coding/C/bigproject/cmake-build-debug/CMakeFiles/bigproject.dir/pageGluttonousSnake.c.obj"
+  "D:/Coding/C/bigproject/pageGuessNumber.c" "D:/Coding/C/bigproject/cmake-build-debug/CMakeFiles/bigproject.dir/pageGuessNumber.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/bigproject.dir/main.c.obj"
+  "CMakeFiles/bigproject.dir/pageGluttonousSnake.c.obj"
+  "CMakeFiles/bigproject.dir/pageGuessNumber.c.obj"
   "bigproject.exe"
   "bigproject.exe.manifest"
   "bigproject.pdb"

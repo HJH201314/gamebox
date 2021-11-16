@@ -74,19 +74,28 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="D:/Coding/C/bigproject/funtionList.h">
+		<Unit filename="D:/Coding/C/bigproject/functionList.h">
+			<Option target="bigproject"/>
+		</Unit>
+		<Unit filename="D:/Coding/C/bigproject/headList.h">
 			<Option target="bigproject"/>
 		</Unit>
 		<Unit filename="D:/Coding/C/bigproject/main.c">
 			<Option target="bigproject"/>
 		</Unit>
+		<Unit filename="D:/Coding/C/bigproject/pageGluttonousSnake.c">
+			<Option target="bigproject"/>
+		</Unit>
+		<Unit filename="D:/Coding/C/bigproject/pageGuessNumber.c">
+			<Option target="bigproject"/>
+		</Unit>
 		<Unit filename="D:/Coding/C/bigproject/pageMain.h">
 			<Option target="bigproject"/>
 		</Unit>
-		<Unit filename="D:/Coding/C/bigproject/pageOne.h">
+		<Unit filename="D:/Coding/C/bigproject/paint.h">
 			<Option target="bigproject"/>
 		</Unit>
-		<Unit filename="D:/Coding/C/bigproject/paint.h">
+		<Unit filename="D:/Coding/C/bigproject/point.h">
 			<Option target="bigproject"/>
 		</Unit>
 		<Unit filename="D:/Coding/C/bigproject/utils.h">

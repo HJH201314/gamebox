@@ -6,28 +6,25 @@
 #define BIGPROJECT_PAINT_H
 
 #include <windows.h>
-#define h 28
-#define hmax 26//最大行是h-2
-#define w 100
-#define wmax 97//最大列是w-3
+#include "headList.h"
 
-char cWin[h][w] = {};
+char cWin[HEIGHT][WIDTH] = {};
 
 void gotoxy(short x,short y);
 
 void buildFrame() {//构造边框
-    for (int i = 0; i < h; i++) {//左右两侧的壁
+    for (int i = 0; i < HEIGHT; i++) {//左右两侧的壁
         cWin[i][0] = '|';
-        cWin[i][w-2] = '|';
-        cWin[i][w-1] = '\n';//换行
+        cWin[i][WIDTH - 2] = '|';
+        cWin[i][WIDTH - 1] = '\n';//换行
     }
-    cWin[h-1][w-1] = '\0';//结束符
-    for (int i = 1; i < w-2; i++) {
+    cWin[HEIGHT - 1][WIDTH - 1] = '\0';//结束符
+    for (int i = 1; i < WIDTH - 2; i++) {
         cWin[0][i] = '-';
-        cWin[h-1][i] = '-';
+        cWin[HEIGHT - 1][i] = '-';
     }
-    for (int i = 1; i < h-1; i++) {
-        for (int j = 1; j < w-2; j++) {
+    for (int i = 1; i < HEIGHT - 1; i++) {
+        for (int j = 1; j < WIDTH - 2; j++) {
             cWin[i][j] = ' ';
         }
     }
@@ -46,8 +43,8 @@ void randomDot(char ch) {
     int n = 10;
     int rand1,rand2;
     while(n--) {
-        rand1=rand()%(h-2)+1;
-        rand2=rand()%(w-3)+1;
+        rand1=rand()%(HEIGHT - 2) + 1;
+        rand2=rand()%(WIDTH - 3) + 1;
         if(cWin[rand1][rand2] >= 'a' && cWin[rand1][rand2] <= 'z')
             cWin[rand1][rand2]++;
         else
@@ -57,16 +54,16 @@ void randomDot(char ch) {
 }
 
 void setPoint(int x,int y,char ch){
-    if(x <= hmax && y <= wmax) {//x,y都不能超过范围
+    if(x <= H_MAX && y <= W_MAX) {//x,y都不能超过范围
         cWin[x][y] = ch;
     }
 }
 
 void setLine(int line,char * ch){
     int len = (int)strlen(ch);//取回有效字符数
-    if(line > 0 && line <= hmax) {//不能超过列最大值
+    if(line > 0 && line <= H_MAX) {//不能超过列最大值
         for(int i = 1;i <= len;i++) {
-            if(i > wmax){
+            if(i > W_MAX){
                 break;//不能超过行最大值
             }
             cWin[line][i] = ch[i-1];//写入字符
@@ -75,22 +72,22 @@ void setLine(int line,char * ch){
 }
 
 void setLineLeft(int line,char * ch) {//直接在某行左侧输出
-    char str[wmax+1];
-    initStrBlank(str,wmax);
+    char str[W_MAX + 1];
+    initStrBlank(str, W_MAX);
     setStrFrom(str,1,ch);
     setLine(line,str);
 }
 
 void setLineCenter(int line,char * ch) {//直接在某行中间输出
-    char str[wmax+1];
-    initStrBlank(str,wmax);
+    char str[W_MAX + 1];
+    initStrBlank(str, W_MAX);
     resetStrCenter(str,ch);
     setLine(line,str);
 }
 
 void setLineRight(int line,char * ch) {//直接在某行右侧输出
-    char str[wmax+1];
-    initStrBlank(str,wmax);
+    char str[W_MAX + 1];
+    initStrBlank(str, W_MAX);
     resetStrRight(str,ch);
     setLine(line,str);
 }

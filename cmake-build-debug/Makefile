@@ -152,6 +152,54 @@ main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/main.c.s
 .PHONY : main.c.s
 
+pageGluttonousSnake.obj: pageGluttonousSnake.c.obj
+.PHONY : pageGluttonousSnake.obj
+
+# target to build an object file
+pageGluttonousSnake.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGluttonousSnake.c.obj
+.PHONY : pageGluttonousSnake.c.obj
+
+pageGluttonousSnake.i: pageGluttonousSnake.c.i
+.PHONY : pageGluttonousSnake.i
+
+# target to preprocess a source file
+pageGluttonousSnake.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGluttonousSnake.c.i
+.PHONY : pageGluttonousSnake.c.i
+
+pageGluttonousSnake.s: pageGluttonousSnake.c.s
+.PHONY : pageGluttonousSnake.s
+
+# target to generate assembly for a file
+pageGluttonousSnake.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGluttonousSnake.c.s
+.PHONY : pageGluttonousSnake.c.s
+
+pageGuessNumber.obj: pageGuessNumber.c.obj
+.PHONY : pageGuessNumber.obj
+
+# target to build an object file
+pageGuessNumber.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGuessNumber.c.obj
+.PHONY : pageGuessNumber.c.obj
+
+pageGuessNumber.i: pageGuessNumber.c.i
+.PHONY : pageGuessNumber.i
+
+# target to preprocess a source file
+pageGuessNumber.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGuessNumber.c.i
+.PHONY : pageGuessNumber.c.i
+
+pageGuessNumber.s: pageGuessNumber.c.s
+.PHONY : pageGuessNumber.s
+
+# target to generate assembly for a file
+pageGuessNumber.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\bigproject.dir\build.make CMakeFiles/bigproject.dir/pageGuessNumber.c.s
+.PHONY : pageGuessNumber.c.s
+
 # Help Target
 help:
 	@echo The following are some of the valid targets for this Makefile:
@@ -164,6 +212,12 @@ help:
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
+	@echo ... pageGluttonousSnake.obj
+	@echo ... pageGluttonousSnake.i
+	@echo ... pageGluttonousSnake.s
+	@echo ... pageGuessNumber.obj
+	@echo ... pageGuessNumber.i
+	@echo ... pageGuessNumber.s
 .PHONY : help
 
 

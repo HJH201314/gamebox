@@ -6,43 +6,19 @@
 
 #IncludeRegexTransform: 
 
-D:/Coding/C/bigproject/funtionList.h
+D:/Coding/C/bigproject/functionList.h
 
-D:/Coding/C/bigproject/main.c
-stdio.h
--
+D:/Coding/C/bigproject/headList.h
+
+D:/Coding/C/bigproject/pageGluttonousSnake.c
 stdlib.h
 -
-math.h
--
-time.h
--
-conio.h
--
-process.h
--
-string.h
--
-stdarg.h
--
-funtionList.h
-D:/Coding/C/bigproject/funtionList.h
-paint.h
-D:/Coding/C/bigproject/paint.h
-utils.h
-D:/Coding/C/bigproject/utils.h
-pageMain.h
-D:/Coding/C/bigproject/pageMain.h
-
-D:/Coding/C/bigproject/pageMain.h
-pageOne.h
-D:/Coding/C/bigproject/pageOne.h
-
-D:/Coding/C/bigproject/pageOne.h
-
-D:/Coding/C/bigproject/paint.h
 windows.h
 -
-
-D:/Coding/C/bigproject/utils.h
+conio.h
+D:/Coding/C/bigproject/conio.h
+headList.h
+D:/Coding/C/bigproject/headList.h
+functionList.h
+D:/Coding/C/bigproject/functionList.h
 

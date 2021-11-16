@@ -5,7 +5,8 @@
 #ifndef BIGPROJECT_PAGEMAIN_H
 #define BIGPROJECT_PAGEMAIN_H
 
-#include "pageOne.h"
+extern int pageGuessNumber();
+extern int pageGluttonousSnake();
 
 void pageMain(){
     int ch;
@@ -16,19 +17,30 @@ void pageMain(){
             if (ch == KEY_ESC) goto back;
             else{
                 switch(ch){
-                    case '1':
-                        pageOne();
+                    case '1': {
+                        int result = 1;
+                        while (result) {
+                            result = pageGuessNumber();
+                        }
                         break;
-                    case '2':
+                    }
+                    case '2': {
+                        int result = 1;
+                        while (result) {
+                            result = pageGluttonousSnake();
+                        }
                         break;
+                    }
                 }
             }
         }
         buildFrame();
+        setLineRight(1, formatStrD("You have collect %d points",1,getPoints()));
         setLineCenter(2,"Press a number to start:");
         setLineCenter(4,"1:Guess number");
+        setLineCenter(6,"2:Gluttonous snake");
         output();
-        //Sleep(FREQ);
+        Sleep(FREQ);
     }
     back:
     return;

@@ -1,3 +1,6 @@
+#ifndef BIGPROJECT_MAIN_C
+#define BIGPROJECT_MAIN_C
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -7,14 +10,10 @@
 #include <string.h>
 #include <stdarg.h>
 
-#define FREQ 10//窗口刷新率
-#define KEY_BACK 8//Backspace的键值
-#define KEY_ENTER 13//Enter的键值
-#define KEY_ESC 27//Esc的键值
-
-#include "funtionList.h"
-#include "paint.h"//绘制窗口的头文件,include了windows.h
+#include "functionList.h"
+#include "paint.h"//绘制窗口的头文件,include了windows.HEIGHT
 #include "utils.h"//工具
+#include "point.h"//积分
 #include "pageMain.h"//首页
 
 int main() {
@@ -34,3 +33,5 @@ int main() {
 
     return 0;
 }
+
+#endif //BIGPROJECT_MAIN_C
