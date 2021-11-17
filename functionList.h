@@ -16,7 +16,8 @@ char* formatStrD(char * format, int count,...);//直接返回格式化(仅%d)后
 char* connectStr(int count,...);//将count个字符串拼接起来,最长不超过wmax
 
 void setLine(int line,char * ch);//将ch放入cWin的第line+1行
-void setPoint(int x,int y,char ch);//将ch放入cWin的(x+1,y+1)
+void setPoint(int x,int y,char ch);//将ch放入cWin的(x,y)
+char getPoint(int x,int y);//获取cWin[x][y]
 void setLineLeft(int line,char * ch);//在第line行居左输出ch
 void setLineCenter(int line,char * ch);//在第line行居中输出ch
 void setLineRight(int line,char * ch);//在第line行居右输出ch
