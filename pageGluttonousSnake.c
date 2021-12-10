@@ -11,9 +11,6 @@
 #include "headList.h"
 #include "functionList.h"
 
-static int is_started = 0;
-static int dir = 0;
-
 //局部函数声明
 static int getKeyPress();
 static void init();
@@ -31,33 +28,51 @@ struct partofsnake {
 struct applesample {
     int x;
     int y;
-    int points;
+    int points;//吃掉苹果可以获得的积分(长度)
 };
 
 //全局变量
+static int midline = H_MAX / 2;//中间行
+static int is_started = 0;//是否已开始游戏
+static int is_failed = 0;//是否已经输了
+static int dir = 0;//方向
 static struct partofsnake snake[H_MAX*W_MAX];
 static struct applesample apple = {-1,-1,0};
 static int snake_length = 0;
+static int dynamic_freq = FREQ;
 
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
+    SetConsoleTitleA("贪吃蛇");
     init();
-    buildFrame();
+    initPage();
     setLineCenter(H_MAX/2,"Press Enter to Start...");
     int key_result = 0;
     while(1) {
         key_result = getKeyPress();
-        if(key_result) return !key_result;
+        if(key_result != FLAG_NOTHING) return key_result;
         if(is_started) {
-            if(goSnake() != 0) return 0;//撞墙
-            buildFrame();//buildFrame要在goSnake后面,不然获取不到上一状态
-            generateApple();
-            drawSnake();
+            setTips(formatStrD("Length:%d",1,snake_length));//先输出提示再走蛇,否则有问题
+            if(goSnake() != 0) {//撞墙的时候
+                addPoints(snake_length-1);
+                setLineCenter(midline - 2, "YOU FAILED!");
+                setLineCenter(midline, formatStrD("+ %d Points.",1,snake_length-1));
+                setLineCenter(midline + 2,"Press Enter to restart or Esc to exit.");
+                output();
+                is_started = 0;
+                is_failed = 1;
+            }
+            if (!is_failed) {
+                buildFrame();//buildFrame要在goSnake后面,不然获取不到上一状态
+                generateApple();
+                drawSnake();
+            }
         }
         output();
-        Sleep(48);
+        if(dir % 2) dynamic_freq = 10*FREQ;
+        else dynamic_freq = 5*FREQ;
+        Sleep(dynamic_freq);
     }
-    return 0;
 }
 
 //按键处理程序
@@ -67,9 +82,10 @@ static int getKeyPress(){
         ch = _getch();//
         switch (ch) {
             case KEY_ESC://按下Esc,退出page
-                return 1;
+                return FLAG_EXIT;
             case KEY_ENTER: {
                 if(!is_started) {
+                    if (is_failed) return FLAG_RESTART;
                     is_started = !is_started;
                     snake[0].x = H_MAX / 2;
                     snake[0].y = W_MAX / 2;
@@ -79,16 +95,29 @@ static int getKeyPress(){
                 }
                 break;
             }
-            case KEY_TOP: dir = 1;break;
-            case KEY_LEFT: dir = 2;break;
-            case KEY_BOTTOM: dir = 3;break;
-            case KEY_RIGHT: dir = 4;break;
+            //方向控制要防止掉头
+            case KEY_TOP:
+                if (dir != 3)
+                    dir = 1;
+                break;
+            case KEY_LEFT:
+                if (dir != 4)
+                    dir = 2;
+                break;
+            case KEY_BOTTOM:
+                if (dir != 1)
+                    dir = 3;
+                break;
+            case KEY_RIGHT:
+                if (dir != 2)
+                    dir = 4;
+                break;
             default:
                 break;
                 //setLineCenter(H_MAX, formatStrD("%d",1,ch));
         }
     }
-    return 0;
+    return FLAG_NOTHING;
 };
 
 //初始化
@@ -98,6 +127,7 @@ static void init() {//因为全局变量都会复用,必须要初始化
     snake_length = 0;
     //还原start状态
     is_started = 0;
+    is_failed = 0;
     //还原apple
     apple.x = apple.y = -1;
     apple.points = 0;
@@ -108,13 +138,17 @@ static void generateApple() {
     if(apple.x == -1) {
         int x = rand() % H_MAX + 1;
         int y = rand() % W_MAX + 1;
-        while(getPoint(x,y) == 'o') {//如果蛇在上面就要重复生成(这种方法不完备)
+        while(getPoint(x,y) == 'o' || getPoint(x,y) == 'O') {//如果蛇在上面就要重复生成(这种方法不完备)
             x = rand() % H_MAX + 1;
             y = rand() % W_MAX + 1;
         }
         apple.x = x;
         apple.y = y;
-        apple.points = 1;
+        if(x == H_MAX || x == 1 || y == W_MAX || y == 1) {
+            apple.points = 2;
+        } else {
+            apple.points = 1;
+        }
     }
     setPoint(apple.x,apple.y,'*');
 }
@@ -135,13 +169,16 @@ static int goSnake() {//返回0为正常,1为碰壁
             return 1;
     }
     if(snake[0].x == apple.x && snake[0].y == apple.y) {
-        switch (snake[snake_length - 1].lastdir) {//上一个点
-            case 1:snake[snake_length].x = snake[snake_length - 1].x + 1;snake[snake_length].y = snake[snake_length - 1].y;break;
-            case 2:snake[snake_length].y = snake[snake_length - 1].y + 1;snake[snake_length].x = snake[snake_length - 1].x;break;
-            case 3:snake[snake_length].x = snake[snake_length - 1].x - 1;snake[snake_length].y = snake[snake_length - 1].y;break;
-            case 4:snake[snake_length].y = snake[snake_length - 1].y - 1;snake[snake_length].x = snake[snake_length - 1].x;break;
+        while(apple.points--) {
+            switch (snake[snake_length - 1].lastdir) {//蛇尾的前进方向
+                case 1:snake[snake_length].x = snake[snake_length - 1].x + 1;snake[snake_length].y = snake[snake_length - 1].y;break;
+                case 2:snake[snake_length].y = snake[snake_length - 1].y + 1;snake[snake_length].x = snake[snake_length - 1].x;break;
+                case 3:snake[snake_length].x = snake[snake_length - 1].x - 1;snake[snake_length].y = snake[snake_length - 1].y;break;
+                case 4:snake[snake_length].y = snake[snake_length - 1].y - 1;snake[snake_length].x = snake[snake_length - 1].x;break;
+            }
+            snake[snake_length].lastdir=snake[snake_length-1].lastdir;//给蛇的最新的尾部设置前进方向
+            snake_length++;
         }
-        snake_length++;
         apple.x = apple.y = -1;
         apple.points = 0;
     }
@@ -153,7 +190,8 @@ static int goSnake() {//返回0为正常,1为碰壁
 
 //蛇形绘制程序
 static void drawSnake() {
-    for(int i = 0; i < snake_length; i++) {
+    setPoint(snake[0].x,snake[0].y,'O');
+    for(int i = 1; i < snake_length; i++) {
         setPoint(snake[i].x,snake[i].y,'o');
     }
 }

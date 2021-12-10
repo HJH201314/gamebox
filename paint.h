@@ -8,7 +8,9 @@
 #include <windows.h>
 #include "headList.h"
 
+char esctip[WIDTH] = {};
 char cWin[HEIGHT][WIDTH] = {};
+char tips[WIDTH] = {};
 
 void gotoxy(short x,short y);
 
@@ -99,9 +101,27 @@ void setLineRight(int line,char * ch) {//直接在某行右侧输出
     setLine(line,str);
 }
 
+void setTips(char * str) {
+    if(strlen(str) <= WIDTH - 1) {
+        setStrFrom(tips,1,str);
+    }
+}
+
+void initPage() {//初始化页面
+    memset(tips,' ',WIDTH-1);
+    buildFrame();
+}
+
 void output() {
     printf("%s",(char *)cWin);//将cWin数组输出
-    printf("\nPress Esc to exit.\n按Esc键退出或返回上一级.");
+    if(tips[0] != ' ') {
+        printf("\n%s",(char *)tips);
+        printf("\n%s",(char *)esctip);
+    } else {
+        printf("\n%s",(char *)esctip);
+        printf("\n%s",(char *)tips);
+    }
+
     gotoxy(0,0);
 }
 

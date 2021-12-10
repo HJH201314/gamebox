@@ -24,10 +24,12 @@ int main() {
     CursorInfo.bVisible = 0; //隐藏控制台光标
     SetConsoleCursorInfo(handle, &CursorInfo);//设置控制台光标状态
     //控制台光标处理end
+    memset(esctip,' ',WIDTH-1);
+    setStrFrom(esctip,1,"按下Esc键退出或返回上级");
 
     srand(getpid());
 
-    buildFrame();
+    initPage();
 
     pageMain();
 

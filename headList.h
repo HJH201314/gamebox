@@ -7,9 +7,9 @@
 
 #define FREQ 10//窗口刷新率
 #define HEIGHT 28
-#define H_MAX 26//最大行是h-2
+#define H_MAX 26//最大行是h-2(1~H_MAX)
 #define WIDTH 100
-#define W_MAX 97//最大列是w-3
+#define W_MAX 97//最大列是w-3(1~W_MAX)
 
 #define KEY_BACK 8//Backspace的键值
 #define KEY_ENTER 13//Enter的键值
@@ -18,6 +18,10 @@
 #define KEY_LEFT 75//左
 #define KEY_BOTTOM 80//下
 #define KEY_RIGHT 77//右
+
+#define FLAG_NOTHING 0//啥也没事
+#define FLAG_EXIT 1//退出标识
+#define FLAG_RESTART 2//重开标识
 
 
 #endif //BIGPROJECT_HEADLIST_H
