@@ -12,6 +12,9 @@
 #include "functionList.h"
 
 #define APPLE_COUNT 10
+#define SYMBOL_SNAKE_HEAD 'O'
+#define SYMBOL_SNAKE_BODY 'o'
+#define SYMBOL_APPLE '*'
 
 //局部函数声明
 static int getKeyPress();
@@ -39,6 +42,7 @@ static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
 static int dir = 0;//方向
+static int is_turned = 0;//在方向改变后变为1,走蛇后变回0,用于防止快速按动导致的装上脖子
 static struct partofsnake snake[H_MAX*W_MAX];
 static struct applesample apples[APPLE_COUNT];
 static int snake_length = 0;
@@ -52,9 +56,9 @@ int pageGluttonousSnake() {//返回0即返回mainPage
     setLineCenter(H_MAX/2,"Press Enter to Start...");
     int key_result = 0;
     while(1) {
-        key_result = getKeyPress();
+        key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING) return key_result;
-        if(is_started && timetick % ((dir%2+1)*3) == 0) {//后面一半是控制蛇的速度,但导致操作过快时撞到自己的脖子
+        if(is_started && timetick % ((dir%2+1)*4) == 0) {//后面一半是控制蛇的速度,但导致操作过快时撞到自己的脖子
             setTips(formatStrD("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
             if (goSnake() != 0) {//撞墙的时候
                 addPoints(snake_length - 1);
@@ -64,7 +68,7 @@ int pageGluttonousSnake() {//返回0即返回mainPage
                 output();
                 is_started = 0;
                 is_failed = 1;
-            }
+            } else is_turned = 0;
             if (!is_failed) {
                 buildFrame();//buildFrame要在goSnake后面,不然获取不到上一状态
                 generateApple();
@@ -99,13 +103,13 @@ static int getKeyPress(){
             }
             //方向控制要防止掉头
             case KEY_TOP:
-                if (dir != 3) dir = 1; break;
+                if (dir != 3 && !is_turned) {dir = 1; is_turned = 1;} break;
             case KEY_LEFT:
-                if (dir != 4) dir = 2; break;
+                if (dir != 4 && !is_turned) {dir = 2; is_turned = 1;} break;
             case KEY_BOTTOM:
-                if (dir != 1) dir = 3; break;
+                if (dir != 1 && !is_turned) {dir = 3; is_turned = 1;} break;
             case KEY_RIGHT:
-                if (dir != 2) dir = 4; break;
+                if (dir != 2 && !is_turned) {dir = 4; is_turned = 1;} break;
             default:
                 break;
         }
@@ -120,9 +124,10 @@ static void init() {//因为全局变量都会复用,必须要初始化
     //还原snake
     memset(snake,0x00,sizeof(snake));
     snake_length = 0;
-    //还原start状态
+    //还原状态
     is_started = 0;
     is_failed = 0;
+    is_turned = 0;
     //还原apple
     for(int i = 0; i < APPLE_COUNT; i++) {
         apples[i].x = apples[i].y = -1;
@@ -136,7 +141,7 @@ static void generateApple() {
         if(apples[i].x == -1) {
             int x = rand() % H_MAX + 1;
             int y = rand() % W_MAX + 1;
-            while(getPoint(x,y) == 'o' || getPoint(x,y) == 'O') {//如果蛇在上面就要重复生成(这种方法不完备)
+            while(getPoint(x,y) == SYMBOL_SNAKE_BODY || getPoint(x,y) == SYMBOL_SNAKE_HEAD) {//如果蛇在上面就要重复生成(这种方法不完备)
                 x = rand() % H_MAX + 1;
                 y = rand() % W_MAX + 1;
             }
@@ -167,10 +172,10 @@ static int goSnake() {//返回0为正常,1为碰壁
         if(snake[i].x < 1 || snake[i].x > H_MAX || snake[i].y < 1 || snake[i].y > W_MAX)
             return 1;
     }
-    if(snake_length != 1 && getPoint(snake[0].x,snake[0].y) == 'o') {//上一刻
+    if(snake_length != 1 && getPoint(snake[0].x,snake[0].y) == SYMBOL_SNAKE_BODY) {//上一刻
         return 1;
     }
-    if(getPoint(snake[0].x,snake[0].y) == '*') {
+    if(getPoint(snake[0].x,snake[0].y) == SYMBOL_APPLE) {
         int i;
         //下方先取得i,嵌套的话缩进太多了
         for(i = 0; i < APPLE_COUNT; i++)
@@ -196,9 +201,9 @@ static int goSnake() {//返回0为正常,1为碰壁
 
 //蛇形绘制程序
 static void drawSnake() {
-    setPoint(snake[0].x,snake[0].y,'O');
+    setPoint(snake[0].x,snake[0].y,SYMBOL_SNAKE_HEAD);
     for(int i = 1; i < snake_length; i++) {
-        setPoint(snake[i].x,snake[i].y,'o');
+        setPoint(snake[i].x,snake[i].y,SYMBOL_SNAKE_BODY);
     }
 }
 

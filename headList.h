@@ -20,8 +20,8 @@
 #define KEY_RIGHT 77//右
 
 #define FLAG_NOTHING 0//啥也没事
-#define FLAG_EXIT 1//退出标识
-#define FLAG_RESTART 2//重开标识
+#define FLAG_EXIT 1000//退出标识
+#define FLAG_RESTART 2000//重开标识
 
 
 #endif //BIGPROJECT_HEADLIST_H
