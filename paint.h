@@ -8,6 +8,9 @@
 #include <windows.h>
 #include "headList.h"
 
+#define WALL_HORIZONTAL '@'
+#define WALL_VERTICAL '#'
+
 char esctip[WIDTH] = {};
 char cWin[HEIGHT][WIDTH] = {};
 char tips[WIDTH] = {};
@@ -16,14 +19,14 @@ void gotoxy(short x,short y);
 
 void buildFrame() {//构造边框
     for (int i = 0; i < HEIGHT; i++) {//左右两侧的壁
-        cWin[i][0] = '|';
-        cWin[i][WIDTH - 2] = '|';
+        cWin[i][0] = WALL_VERTICAL;
+        cWin[i][WIDTH - 2] = WALL_VERTICAL;
         cWin[i][WIDTH - 1] = '\n';//换行
     }
     cWin[HEIGHT - 1][WIDTH - 1] = '\0';//结束符
     for (int i = 1; i < WIDTH - 2; i++) {
-        cWin[0][i] = '-';
-        cWin[HEIGHT - 1][i] = '-';
+        cWin[0][i] = WALL_HORIZONTAL;
+        cWin[HEIGHT - 1][i] = WALL_HORIZONTAL;
     }
     for (int i = 1; i < HEIGHT - 1; i++) {
         for (int j = 1; j < WIDTH - 2; j++) {
