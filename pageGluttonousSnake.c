@@ -10,7 +10,7 @@
 #include <conio.h>
 #include "global.h"
 
-#define APPLE_COUNT 10
+#define APPLE_COUNT 20
 #define SYMBOL_SNAKE_HEAD 'O'
 #define SYMBOL_SNAKE_BODY 'o'
 #define SYMBOL_APPLE '*'
@@ -45,7 +45,6 @@ static int is_turned = 0;//在方向改变后变为1,走蛇后变回0,用于防�
 static struct partofsnake snake[H_MAX*W_MAX];
 static struct applesample apples[APPLE_COUNT];
 static int snake_length = 0;
-static int dynamic_freq = FREQ;
 
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
@@ -119,13 +118,13 @@ static int getKeyPress(){
                 break;
             }
             //方向控制要防止掉头
-            case KEY_TOP:
+            case KEY_TOP: case 'w':
                 if (dir != 3 && !is_turned) {dir = 1; is_turned = 1;} break;
-            case KEY_LEFT:
+            case KEY_LEFT: case 'a':
                 if (dir != 4 && !is_turned) {dir = 2; is_turned = 1;} break;
-            case KEY_BOTTOM:
+            case KEY_BOTTOM: case 's':
                 if (dir != 1 && !is_turned) {dir = 3; is_turned = 1;} break;
-            case KEY_RIGHT:
+            case KEY_RIGHT: case 'd':
                 if (dir != 2 && !is_turned) {dir = 4; is_turned = 1;} break;
             default:
                 break;

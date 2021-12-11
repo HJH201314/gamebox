@@ -7,10 +7,10 @@
 #define BIGPROJECT_HEADLIST_H
 
 #define FREQ 10//窗口刷新率
-#define HEIGHT 28
-#define H_MAX 26//最大行是h-2(1~H_MAX)
-#define WIDTH 100
-#define W_MAX 97//最大列是w-3(1~W_MAX)
+#define HEIGHT 28//数组的一维长度(默认28)
+#define H_MAX (HEIGHT-2)//最大行是h-2(1~H_MAX)
+#define WIDTH 100//数组的二维长度(默认100)
+#define W_MAX (WIDTH-3)//最大列是w-3(1~W_MAX)
 
 #define KEY_BACK 8//Backspace的键值
 #define KEY_ENTER 13//Enter的键值
