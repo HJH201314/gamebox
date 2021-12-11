@@ -2,13 +2,12 @@
 // Created by HJH201314 on 2021/11/3.
 //
 
-#ifndef BIGPROJECT_PAGEMAIN_H
-#define BIGPROJECT_PAGEMAIN_H
+#ifndef BIGPROJECT_PAGEMAIN_C
+#define BIGPROJECT_PAGEMAIN_C
 
 #include <windows.h>
-
-extern int pageGuessNumber();
-extern int pageGluttonousSnake();
+#include <conio.h>
+#include "global.h"
 
 void pageMain(){
     int ch;
@@ -51,4 +50,4 @@ void pageMain(){
     return;
 }
 
-#endif //BIGPROJECT_PAGEMAIN_H
+#endif //BIGPROJECT_PAGEMAIN_C

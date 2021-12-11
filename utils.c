@@ -2,9 +2,12 @@
 // Created by HJH201314 on 2021/11/4.
 //
 
-#ifndef BIGPROJECT_UTILS_H
-#define BIGPROJECT_UTILS_H
+#ifndef BIGPROJECT_UTILS_C
+#define BIGPROJECT_UTILS_C
 
+#include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include "headList.h"
 
 void initStrBlank(char * str, int size) {//初始化str为空格
@@ -87,19 +90,4 @@ char* connectStr(int count,...) {//将count个字符串拼接起来,最长不超
     return result;
 }
 
-//char* formatStrD(char * format, int count, ...){//直接返回格式化(仅%d)后的文本
-//    static char show[W_MAX+1] = "";//防止内存泄露,用static
-//    va_list vaList;
-//    /* 为 count 个参数初始化 valist */
-//    va_start(vaList, count);
-//    /* 访问所有赋给 valist 的参数 */
-//    for (int i = 0; i < count; i++)
-//    {
-//        sprintf(show,format, va_arg(vaList,int));
-//    }
-//    /* 清理为 valist 保留的内存 */
-//    va_end(vaList);
-//    return show;
-//}
-
-#endif //BIGPROJECT_UTILS_H
+#endif //BIGPROJECT_UTILS_C

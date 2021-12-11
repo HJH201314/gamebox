@@ -9,12 +9,11 @@
 #include <process.h>
 #include <string.h>
 #include <stdarg.h>
+#include <windows.h>
 
-#include "functionList.h"
-#include "paint.h"//绘制窗口的头文件,include了windows.HEIGHT
-#include "utils.h"//工具
-#include "point.h"//积分
-#include "pageMain.h"//首页
+#include "global.h"
+
+extern char esctip[];
 
 int main() {
     //控制台光标处理start

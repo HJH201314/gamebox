@@ -1,5 +1,6 @@
 //
 // Created by HJH201314 on 2021/11/16.
+// 本头文件包含所有公用常量
 //
 
 #ifndef BIGPROJECT_HEADLIST_H

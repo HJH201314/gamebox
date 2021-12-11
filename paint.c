@@ -2,8 +2,8 @@
 // Created by HJH201314 on 2021/11/3.
 //
 
-#ifndef BIGPROJECT_PAINT_H
-#define BIGPROJECT_PAINT_H
+#ifndef BIGPROJECT_PAINT_C
+#define BIGPROJECT_PAINT_C
 
 #include <windows.h>
 #include "headList.h"
@@ -128,4 +128,4 @@ void output() {
     gotoxy(0,0);
 }
 
-#endif //BIGPROJECT_PAINT_H
+#endif //BIGPROJECT_PAINT_C

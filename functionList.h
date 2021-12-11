@@ -1,5 +1,6 @@
 //
 // Created by HJH201314 on 2021/11/5.
+// 本头文件包含所有可用的工具函数
 //
 
 #ifndef BIGPROJECT_FUNCTIONLIST_H

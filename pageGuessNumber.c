@@ -9,8 +9,7 @@
 #include <string.h>
 #include <windows.h>
 #include <conio.h>
-#include "functionList.h"
-#include "headList.h"
+#include "global.h"
 
 #define TRYTIME_BASE_MAX 10//第一关的最大值
 

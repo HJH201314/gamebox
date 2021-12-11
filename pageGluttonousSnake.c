@@ -7,9 +7,8 @@
 
 #include <stdlib.h>
 #include <windows.h>
-#include "conio.h"
-#include "headList.h"
-#include "functionList.h"
+#include <conio.h>
+#include "global.h"
 
 #define APPLE_COUNT 10
 #define SYMBOL_SNAKE_HEAD 'O'
@@ -18,7 +17,7 @@
 
 //局部函数声明
 static int getKeyPress();
-static void init();
+static void initGame();
 static int goSnake();
 static void drawSnake();
 static void generateApple();
@@ -51,7 +50,7 @@ static int dynamic_freq = FREQ;
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
     SetConsoleTitleA("贪吃蛇");
-    init();
+    initGame();
     initPage();
     setLineCenter(H_MAX/2,"Press Enter to Start...");
     int key_result = 0;
@@ -78,6 +77,24 @@ int pageGluttonousSnake() {//返回0即返回mainPage
         output();
         timetick++;
         Sleep(FREQ);
+    }
+}
+
+//初始化
+static void initGame() {//因为全局变量都会复用,必须要初始化
+    //初始化时间
+    timetick = 0;
+    //还原snake
+    memset(snake,0x00,sizeof(snake));
+    snake_length = 0;
+    //还原状态
+    is_started = 0;
+    is_failed = 0;
+    is_turned = 0;
+    //还原apple
+    for(int i = 0; i < APPLE_COUNT; i++) {
+        apples[i].x = apples[i].y = -1;
+        apples[i].points = 0;
     }
 }
 
@@ -116,24 +133,6 @@ static int getKeyPress(){
     }
     return FLAG_NOTHING;
 };
-
-//初始化
-static void init() {//因为全局变量都会复用,必须要初始化
-    //初始化时间
-    timetick = 0;
-    //还原snake
-    memset(snake,0x00,sizeof(snake));
-    snake_length = 0;
-    //还原状态
-    is_started = 0;
-    is_failed = 0;
-    is_turned = 0;
-    //还原apple
-    for(int i = 0; i < APPLE_COUNT; i++) {
-        apples[i].x = apples[i].y = -1;
-        apples[i].points = 0;
-    }
-}
 
 //生成苹果(如果被吃了)
 static void generateApple() {
