@@ -29,6 +29,7 @@ static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
 static int score = 0;
+static struct block lastblock = {1,1,0b1111111111111111};
 static struct block thisblock = {1,1,0b1111111111111111};
 
 //该页面主程序
@@ -42,9 +43,10 @@ int pageTetris() {//返回0即返回mainPage
     while(1) {
         key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING) return key_result;
-//        if(is_started && timetick % 5 == 0) {//后面一半是控制方块的速度
-//            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
-//
+        if(is_started && timetick % 20 == 0) {//后面一半是控制方块的速度
+            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
+            goBlock();
+            drawBlock();
 //            if (goBlock() != 0) {//撞墙的时候
 //                addPoints(score);
 //                setLineCenter(midline - 2, "GAME OVER!");
@@ -57,24 +59,37 @@ int pageTetris() {//返回0即返回mainPage
 //            if (!is_failed) {
 //                buildFrame();//buildFrame要在goSnake后面,不然获取不到上一状态
 //            }
-//        }
+        }
         //thisblock.shape = rand() % 65535 + 1;
         //setLine(1,formatStrD("%d", 1, thisblock.shape));
-        buildFrame();
-        drawBlock();
         output();
         timetick++;
         Sleep(FREQ);
     }
 }
 
-//测试画出thisblock
+//清除lastblock并画出thisblock
 static void drawBlock() {
     int i,j;
+    //清除lastblock的符号
     for(i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
         j = 16 - i;//j为从高到低第j位,含0方便计算
-        setPoint(thisblock.x + (j-1) / 4,thisblock.y + (j-1)%4,(char)(((thisblock.shape >> i) & 1)?'o':' '));
+        if ((lastblock.shape >> i) & 1)
+            setPoint(lastblock.x + (j-1) / 4,lastblock.y + (j-1)%4,' ');
     }
+    //画出thisblock的符号
+    for(i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
+        j = 16 - i;//j为从高到低第j位,含0方便计算
+        if ((thisblock.shape >> i) & 1)
+            setPoint(thisblock.x + (j-1) / 4,thisblock.y + (j-1)%4,'o');
+    }
+}
+
+//让块堆往下走
+static int goBlock() {
+    memcpy(&lastblock,&thisblock,sizeof(thisblock));//储存block信息到lastblock
+    thisblock.x++;
+    return 1;
 }
 
 //初始化
@@ -102,10 +117,20 @@ static int getKeyPress(){
                 break;
             }
             case KEY_RIGHT: {
-                if (thisblock.y <= W_MAX - 4) thisblock.y++; break;
+                memcpy(&lastblock,&thisblock,sizeof(thisblock));
+                if (thisblock.y <= W_MAX - 4) {
+                    thisblock.y++;
+                    drawBlock();
+                }
+                break;
             }
             case KEY_LEFT: {
-                if (thisblock.y > 1) thisblock.y--; break;
+                memcpy(&lastblock,&thisblock,sizeof(thisblock));
+                if (thisblock.y > 1) {
+                    thisblock.y--;
+                    drawBlock();
+                }
+                break;
             }
             default:
                 break;
@@ -113,7 +138,3 @@ static int getKeyPress(){
     }
     return FLAG_NOTHING;
 };
-
-static int goBlock() {
-    return 0;
-}
