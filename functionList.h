@@ -32,4 +32,6 @@ void addPoints(int n);//加积分
 void delPoints(int n);//减积分
 int getPoints();//获取积分
 
+void setParam();//写配置项
+
 #endif //BIGPROJECT_FUNCTIONLIST_H

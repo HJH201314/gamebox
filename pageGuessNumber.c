@@ -2,9 +2,6 @@
 // Created by HJH201314 on 2021/11/5.
 //
 
-#ifndef BIGPROJECT_PAGEGUESSNUMBER_C
-#define BIGPROJECT_PAGEGUESSNUMBER_C
-
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
@@ -116,5 +113,3 @@ static int getKeyPress(){
     }
     return FLAG_NOTHING;
 };
-
-#endif //BIGPROJECT_PAGEGUESSNUMBER_C

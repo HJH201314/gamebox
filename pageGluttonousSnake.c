@@ -2,9 +2,6 @@
 // Created by HJH201314 on 2021/11/16.
 //
 
-#ifndef BIGPROJECT_PAGEGLUTTONOUSSNAKE_C
-#define BIGPROJECT_PAGEGLUTTONOUSSNAKE_C
-
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
@@ -204,5 +201,3 @@ static void drawSnake() {
         setPoint(snake[i].x,snake[i].y,SYMBOL_SNAKE_BODY);
     }
 }
-
-#endif //BIGPROJECT_PAGEGLUTTONOUSSNAKE_C

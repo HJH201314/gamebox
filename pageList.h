@@ -9,5 +9,6 @@
 void pageMain();
 int pageGuessNumber();
 int pageGluttonousSnake();
+int pageTetris();
 
 #endif //BIGPROJECT_PAGELIST_H

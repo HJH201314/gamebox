@@ -2,11 +2,9 @@
 // Created by HJH201314 on 2021/11/3.
 //
 
-#ifndef BIGPROJECT_PAGEMAIN_C
-#define BIGPROJECT_PAGEMAIN_C
-
 #include <windows.h>
 #include <conio.h>
+#include <stdio.h>
 #include "global.h"
 
 void pageMain(){
@@ -35,6 +33,14 @@ void pageMain(){
                         initPage();
                         break;
                     }
+                    case '3': {
+                        int result = FLAG_RESTART;
+                        while (result == FLAG_RESTART) {
+                            result = pageTetris();
+                        }
+                        initPage();
+                        break;
+                    }
                 }
             }
         }
@@ -43,11 +49,10 @@ void pageMain(){
         setLineCenter(2,"Press a number to start:");
         setLineCenter(4,"1:Guess number(猜数字)");
         setLineCenter(6,"2:Gluttonous snake(贪吃蛇)");
+        setLineCenter(8,"3:Tetris(俄罗斯方块)");
         output();
         Sleep(FREQ);
     }
     back:
     return;
 }
-
-#endif //BIGPROJECT_PAGEMAIN_C
