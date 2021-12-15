@@ -32,6 +32,9 @@ void addPoints(int n);//加积分
 void delPoints(int n);//减积分
 int getPoints();//获取积分
 
-void setParam();//写配置项
+//bitUtils
+int getBit(unsigned int n, int k);//获取无符号整数n的低第k位
+unsigned int setBit(unsigned int n, int k);//设置无符号整数n的低第k位为1并返回
+unsigned int resetBit(unsigned int n, int k);//设置无符号整数n的低第k位为0并返回
 
 #endif //BIGPROJECT_FUNCTIONLIST_H

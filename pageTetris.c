@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <conio.h>
 #include <time.h>
+#include <stdio.h>
 #include "global.h"
 
 #define SYMBOL_BLOCK 'o'
@@ -15,6 +16,7 @@ static int getKeyPress();
 static void initGame();
 static void drawBlock();
 static int goBlock();
+static int hasBlock(unsigned int bin, int m, int n);
 
 //表示一个堆的信息
 struct block {
@@ -29,8 +31,9 @@ static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
 static int score = 0;
-static struct block lastblock = {1,1,0b1111111111111111};
-static struct block thisblock = {1,1,0b1111111111111111};
+static struct block lastblock = {1,1,0b1111111111111111};//记录上一个块以便清除
+static struct block thisblock = {1,1,0b1111111111110000};//当前操作的块
+static struct block nextblock = {1,1,0b1111111111110000};//下一个块
 
 //该页面主程序
 int pageTetris() {//返回0即返回mainPage
@@ -38,37 +41,25 @@ int pageTetris() {//返回0即返回mainPage
     initGame();
     initPage();
     setLineCenter(H_MAX/2,"Press Enter to Start...");
-    srand( (unsigned int)time( NULL ));
     int key_result = 0;
     while(1) {
         key_result = getKeyPress();//获取返回值
-        if(key_result != FLAG_NOTHING) return key_result;
-        if(is_started && timetick % 20 == 0) {//后面一半是控制方块的速度
-            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
-            goBlock();
-            drawBlock();
-//            if (goBlock() != 0) {//撞墙的时候
-//                addPoints(score);
-//                setLineCenter(midline - 2, "GAME OVER!");
-//                setLineCenter(midline, formatStrD("+ %d Points.", 1, score));
-//                setLineCenter(midline + 2, "Press Enter to restart or Esc to exit.");
-//                output();
-//                is_started = 0;
-//                is_failed = 1;
-//            }
-//            if (!is_failed) {
-//                buildFrame();//buildFrame要在goSnake后面,不然获取不到上一状态
-//            }
+        if(key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
+        if(is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
+            //setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
+            if (goBlock() == 0) {//goblock返回0表示该块到底了
+                memcpy(&thisblock,&nextblock,sizeof(nextblock));
+            } else {
+                drawBlock();
+            }
         }
-        //thisblock.shape = rand() % 65535 + 1;
-        //setLine(1,formatStrD("%d", 1, thisblock.shape));
         output();
         timetick++;
         Sleep(FREQ);
     }
 }
 
-//清除lastblock并画出thisblock
+//清除lastblock并且画出thisblock
 static void drawBlock() {
     int i,j;
     //清除lastblock的符号
@@ -87,8 +78,63 @@ static void drawBlock() {
 
 //让块堆往下走
 static int goBlock() {
-    memcpy(&lastblock,&thisblock,sizeof(thisblock));//储存block信息到lastblock
+    int i,j;
+    //判断是否还能下
+    for (j = 1; j <= 4; j++) {//从第一列开始,往右边走
+        for (i = 5; i >= 2; i--) {//从最后一行+1开始,往上走(第一行就不用了)
+            //如果下面一个点是0上面一个点是1,就要判断再往下一个点是不是非空的
+            if (!hasBlock(thisblock.shape,i,j) && hasBlock(thisblock.shape,i-1,j)) {
+                if (getPoint(thisblock.x+i-1,thisblock.y+j-1) != ' ') {
+                    return 0;
+                }
+                break;//只需要判断到最下面的一个
+            }
+        }
+    }
+    memcpy(&lastblock,&thisblock,sizeof(thisblock));//储存thisblock信息到lastblock
     thisblock.x++;
+    return 1;
+}
+
+//判断shape(4*4)的m行n列是否为1
+static int hasBlock(unsigned int bin, int m, int n) {
+    if (m >= 0 && m <=4 && n >= 0 && n <=4)
+        return getBit(bin,21-4*m-n);//k = 16-(4(m-1)+(n-1))
+    else
+        return 0;
+}
+
+//判断是否能右移
+static int isMovableRight() {
+    int i,j;
+    for (i = 4; i >= 1; i--) {//从最后一行开始,往上走
+        for (j = 5; j >= 2; j--) {//从最后一列+1开始,往左走(第一列就不用了)
+            //如果右边一个点是0左边一个点是1,就要判断再往右一个点是不是非空的
+            if (!hasBlock(thisblock.shape,i,j) && hasBlock(thisblock.shape,i,j-1)) {
+                if (getPoint(thisblock.x+i-1,thisblock.y+j-1) != ' ') {
+                    return 0;
+                }
+                break;//只需要判断到最右边的一个
+            }
+        }
+    }
+    return 1;
+}
+
+//判断是否能左移
+static int isMovableLeft() {
+    int i,j;
+    for (i = 4; i >= 1; i--) {//从最后一行开始,往上走
+        for (j = 0; j <= 3; j++) {//从第一列-1开始,往右走(最后一列就不用了)
+            //如果左边一个点是0右边一个点是1,就要判断再往右一个点是不是非空的
+            if (!hasBlock(thisblock.shape,i,j) && hasBlock(thisblock.shape,i,j+1)) {
+                if (getPoint(thisblock.x+i-1,thisblock.y+j-1) != ' ') {
+                    return 0;
+                }
+                break;//只需要判断到最左边的一个
+            }
+        }
+    }
     return 1;
 }
 
@@ -113,20 +159,34 @@ static int getKeyPress(){
                 if(!is_started) {
                     if (is_failed) return FLAG_RESTART;
                     is_started = !is_started;
+                    buildFrame();//清除掉提示语
+                    drawBlock();
                 }
                 break;
             }
+            case KEY_BOTTOM:
+                return KEY_BOTTOM;
             case KEY_RIGHT: {
-                memcpy(&lastblock,&thisblock,sizeof(thisblock));
-                if (thisblock.y <= W_MAX - 4) {
+                if (is_started) {
+                    //判断是否撞到已有的块
+                    if (!isMovableRight())
+                        break;
+                    //判断是否撞墙
+                    if (thisblock.y > W_MAX - 4)
+                        break;
+                    memcpy(&lastblock,&thisblock,sizeof(thisblock));
                     thisblock.y++;
                     drawBlock();
                 }
                 break;
             }
             case KEY_LEFT: {
-                memcpy(&lastblock,&thisblock,sizeof(thisblock));
-                if (thisblock.y > 1) {
+                if (is_started) {
+                    if (!isMovableLeft())
+                        break;
+                    if (thisblock.y <= 1)
+                        break;
+                    memcpy(&lastblock,&thisblock,sizeof(thisblock));
                     thisblock.y--;
                     drawBlock();
                 }

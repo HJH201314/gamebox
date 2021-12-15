@@ -90,4 +90,22 @@ char* connectStr(int count,...) {//将count个字符串拼接起来,最长不超
     return result;
 }
 
+//bitUtils
+
+//获取无符号整数n的低第k位
+int getBit(unsigned int n, int k) {
+    return (int)((n >> (k - 1)) & 1);
+}
+
+//设置无符号整数n的低第k位为1并返回
+unsigned int setBit(unsigned int n, int k) {
+    return (n | (1 << k));
+}
+
+//设置无符号整数n的低第k位为0并返回
+unsigned int resetBit(unsigned int n, int k) {
+    return n & (~(1 << k));
+}
+
+
 #endif //BIGPROJECT_UTILS_C

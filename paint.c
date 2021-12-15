@@ -65,10 +65,13 @@ void setPoint(int x,int y,char ch){
 }
 
 char getPoint(int x,int y){
-    if(x >= 1 && y >= 1 && x <= H_MAX && y <= W_MAX) {//x,y都不能超过范围
+    if (x < 1 || x > H_MAX) {
+        return WALL_HORIZONTAL;
+    } else if (y < 1 || y > W_MAX) {
+        return WALL_VERTICAL;
+    } else {//x,y都没超过范围
         return cWin[x][y];
     }
-    return ' ';
 }
 
 void setLine(int line,char * ch){
