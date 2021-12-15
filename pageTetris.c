@@ -59,11 +59,11 @@ int pageTetris() {//返回0即返回mainPage
         key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
         if(is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
-            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
+            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
                 eliminateLine();
                 memcpy(&thisblock,&nextblock,sizeof(nextblock));
-                //nextblock.shape = blocklist[rand() % 5];
+                nextblock.shape = blocklist[rand() % 5];
             } else {
                 drawBlock();
             }
@@ -183,12 +183,12 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     is_failed = 0;
     //初始化中间分隔
     width_flex = W_MAX / 3;
-    width_flex = 6;
+    //width_flex = 6;
     //初始化当前块和将来块
-    //thisblock.shape = blocklist[rand() % 5];
-    //nextblock.shape = blocklist[rand() % 5];
-    thisblock.shape = blocklist[0];
-    nextblock.shape = blocklist[0];
+    thisblock.shape = blocklist[rand() % 5];
+    nextblock.shape = blocklist[rand() % 5];
+    //thisblock.shape = blocklist[0];
+    //nextblock.shape = blocklist[0];
 }
 
 //按键处理程序
