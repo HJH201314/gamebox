@@ -32,8 +32,8 @@ static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
 static int score = 0;
 static struct block lastblock = {1,1,0b1111111111111111};//记录上一个块以便清除
-static struct block thisblock = {1,1,0b1111111111110000};//当前操作的块
-static struct block nextblock = {1,1,0b1111111111110000};//下一个块
+static struct block thisblock = {1,1,0b1100011000000000};//当前操作的块
+static struct block nextblock = {0,1,0b1100011000000000};//下一个块
 
 //该页面主程序
 int pageTetris() {//返回0即返回mainPage
@@ -168,11 +168,8 @@ static int getKeyPress(){
                 return KEY_BOTTOM;
             case KEY_RIGHT: {
                 if (is_started) {
-                    //判断是否撞到已有的块
+                    //判断是否撞到已有的块或墙
                     if (!isMovableRight())
-                        break;
-                    //判断是否撞墙
-                    if (thisblock.y > W_MAX - 4)
                         break;
                     memcpy(&lastblock,&thisblock,sizeof(thisblock));
                     thisblock.y++;
@@ -183,8 +180,6 @@ static int getKeyPress(){
             case KEY_LEFT: {
                 if (is_started) {
                     if (!isMovableLeft())
-                        break;
-                    if (thisblock.y <= 1)
                         break;
                     memcpy(&lastblock,&thisblock,sizeof(thisblock));
                     thisblock.y--;
