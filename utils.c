@@ -99,12 +99,12 @@ int getBit(unsigned int n, int k) {
 
 //设置无符号整数n的低第k位为1并返回
 unsigned int setBit(unsigned int n, int k) {
-    return (n | (1 << k));
+    return (n | (1 << (k - 1)));
 }
 
 //设置无符号整数n的低第k位为0并返回
 unsigned int resetBit(unsigned int n, int k) {
-    return n & (~(1 << k));
+    return n & (~(1 << (k - 1)));
 }
 
 
