@@ -9,13 +9,18 @@
 #include <stdio.h>
 #include "global.h"
 
-#define SYMBOL_BLOCK 'o'
+#define BLOCK_SYMBOL 'o'
+#define BLOCK_COUNT 6
+
+extern int width_flex;
+extern char cWin[HEIGHT][WIDTH];
 
 //局部函数声明
 static int getKeyPress();
 static void initGame();
 static void drawBlock();
 static int goBlock();
+static void eliminateLine();
 static int hasBlock(unsigned int bin, int m, int n);
 
 //表示一个堆的信息
@@ -31,6 +36,14 @@ static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
 static int score = 0;
+static unsigned int blocklist[BLOCK_COUNT] = {
+        0b1100110000000000,//田
+        0b1100011000000000,//z
+        0b1000100010001000,//|
+        0b1000110010000000,//├
+        0b1100100010000000,//┌
+        0b1100000000000000//test
+};//列表
 static struct block lastblock = {1,1,0b1111111111111111};//记录上一个块以便清除
 static struct block thisblock = {1,1,0b1100011000000000};//当前操作的块
 static struct block nextblock = {0,1,0b1100011000000000};//下一个块
@@ -46,9 +59,11 @@ int pageTetris() {//返回0即返回mainPage
         key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
         if(is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
-            //setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
+            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走蛇,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
+                eliminateLine();
                 memcpy(&thisblock,&nextblock,sizeof(nextblock));
+                //nextblock.shape = blocklist[rand() % 5];
             } else {
                 drawBlock();
             }
@@ -94,6 +109,27 @@ static int goBlock() {
     memcpy(&lastblock,&thisblock,sizeof(thisblock));//储存thisblock信息到lastblock
     thisblock.x++;
     return 1;
+}
+
+//消除整行
+static void eliminateLine() {
+    int i,j,flag;
+    do {
+        for (i = H_MAX; i >= 1; i--) {
+            flag = i;
+            for (j = 1; j <= width_flex; j++) {
+                if (getPoint(i, j) == ' ')
+                    flag = 0;
+            }
+            if (flag) break;
+        }
+        if (flag) {//如果整行都是
+            score += width_flex;
+            for (i = flag; i > 1; i--) {//将上面的往下压
+                memmove(cWin[i] + 1, cWin[i - 1] + 1, width_flex);
+            }
+        }
+    } while (flag);//如果flag了那就继续看看还有没有其它行
 }
 
 //判断shape(4*4)的m行n列是否为1
@@ -145,6 +181,14 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     //还原状态
     is_started = 0;
     is_failed = 0;
+    //初始化中间分隔
+    width_flex = W_MAX / 3;
+    width_flex = 6;
+    //初始化当前块和将来块
+    //thisblock.shape = blocklist[rand() % 5];
+    //nextblock.shape = blocklist[rand() % 5];
+    thisblock.shape = blocklist[0];
+    nextblock.shape = blocklist[0];
 }
 
 //按键处理程序
@@ -160,6 +204,7 @@ static int getKeyPress(){
                     if (is_failed) return FLAG_RESTART;
                     is_started = !is_started;
                     buildFrame();//清除掉提示语
+                    buildFlexFrame();//设置边框
                     drawBlock();
                 }
                 break;

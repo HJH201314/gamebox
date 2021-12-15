@@ -6,14 +6,17 @@
 #define BIGPROJECT_PAINT_C
 
 #include <windows.h>
-#include "headList.h"
+#include <stdio.h>
+#include "global.h"
 
 #define WALL_HORIZONTAL '@'
 #define WALL_VERTICAL '#'
+#define WALL_FLEX '|'
 
 char esctip[WIDTH] = {};
 char cWin[HEIGHT][WIDTH] = {};
 char tips[WIDTH] = {};
+int width_flex = W_MAX;
 
 void gotoxy(short x,short y);
 
@@ -31,6 +34,14 @@ void buildFrame() {//构造边框
     for (int i = 1; i < HEIGHT - 1; i++) {
         for (int j = 1; j < WIDTH - 2; j++) {
             cWin[i][j] = ' ';
+        }
+    }
+}
+
+void buildFlexFrame() {//构造可变的边框
+    if (width_flex != W_MAX) {
+        for (int i = 1; i <= H_MAX; i++) {
+            cWin[i][width_flex+1] = WALL_FLEX;
         }
     }
 }
@@ -67,7 +78,7 @@ void setPoint(int x,int y,char ch){
 char getPoint(int x,int y){
     if (x < 1 || x > H_MAX) {
         return WALL_HORIZONTAL;
-    } else if (y < 1 || y > W_MAX) {
+    } else if (y < 1 || y > width_flex) {//动态宽度
         return WALL_VERTICAL;
     } else {//x,y都没超过范围
         return cWin[x][y];

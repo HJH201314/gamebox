@@ -25,6 +25,7 @@ void setLineRight(int line,char * ch);//在第line行居右输出ch
 void setTips(char * str);//设置提示
 void initPage();//初始化页面,页面载入或重新载入时调用
 void buildFrame();//构建框架(墙壁+中空)
+void buildFlexFrame();//构造中间框
 void gotoxy(short x, short y);//定位输入到(x,y)
 void output();//输出cWin
 
