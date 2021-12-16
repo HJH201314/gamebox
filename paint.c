@@ -11,14 +11,13 @@
 
 #define WALL_HORIZONTAL '@'
 #define WALL_VERTICAL '#'
-#define WALL_FLEX '|'
+#define WALL_FLEX '+'
 
 char esctip[WIDTH] = {};
 char cWin[HEIGHT][WIDTH] = {};
 char tips[WIDTH] = {};
 int width_flex = W_MAX;
-
-void gotoxy(short x,short y);
+int height_flex = H_MAX;
 
 void buildFrame() {//构造边框
     for (int i = 0; i < HEIGHT; i++) {//左右两侧的壁
@@ -40,8 +39,13 @@ void buildFrame() {//构造边框
 
 void buildFlexFrame() {//构造可变的边框
     if (width_flex != W_MAX) {
-        for (int i = 1; i <= H_MAX; i++) {
+        for (int i = 1; i <= height_flex; i++) {
             cWin[i][width_flex+1] = WALL_FLEX;
+        }
+    }
+    if (height_flex != H_MAX) {
+        for (int i = 1; i <= width_flex; i++) {
+            cWin[height_flex+1][i] = WALL_FLEX;
         }
     }
 }
@@ -76,7 +80,7 @@ void setPoint(int x,int y,char ch){
 }
 
 char getPoint(int x,int y){
-    if (x < 1 || x > H_MAX) {
+    if (x < 1 || x > height_flex) {
         return WALL_HORIZONTAL;
     } else if (y < 1 || y > width_flex) {//动态宽度
         return WALL_VERTICAL;

@@ -10,9 +10,10 @@
 #include "global.h"
 
 #define BLOCK_SYMBOL 'o'
-#define BLOCK_COUNT 6
+#define BLOCK_COUNT 7
 
 extern int width_flex;
+extern int height_flex;
 extern char cWin[HEIGHT][WIDTH];
 
 //局部函数声明
@@ -48,6 +49,7 @@ static int score = 0;
 static unsigned int blocklist[BLOCK_COUNT] = {
         0b1100110000000000,//田
         0b1100011000000000,//z
+        0b0110110000000000,//反z
         0b1000100010001000,//|
         0b1000110010000000,//├
         0b1100100010000000,//┌
@@ -72,7 +74,7 @@ int pageTetris() {//返回0即返回mainPage
             if (goBlock() == 0) {//goblock返回0表示该块到底了
                 eliminateLine();
                 memcpy(&thisblock, &nextblock, sizeof(nextblock));
-                nextblock.shape = blocklist[rand() % 5];
+                nextblock.shape = blocklist[rand() % BLOCK_COUNT];
             } else {
                 drawBlock();
             }
@@ -124,7 +126,7 @@ static int goBlock() {
 static void eliminateLine() {
     int i, j, flag;
     do {
-        for (i = H_MAX; i >= 1; i--) {
+        for (i = height_flex; i >= 1; i--) {
             flag = i;
             for (j = 1; j <= width_flex; j++) {
                 if (getPoint(i, j) == ' ')
@@ -222,11 +224,12 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     is_started = 0;
     is_failed = 0;
     //初始化中间分隔
-    width_flex = W_MAX / 3;
-    //width_flex = 6;
+    //width_flex = W_MAX / 3;
+    width_flex = 10;
+    height_flex = 18;
     //初始化当前块和将来块
-    thisblock.shape = blocklist[rand() % 5];
-    nextblock.shape = blocklist[rand() % 5];
+    thisblock.shape = blocklist[rand() % BLOCK_COUNT];
+    nextblock.shape = blocklist[rand() % BLOCK_COUNT];
     //thisblock.shape = blocklist[0];
     //nextblock.shape = blocklist[0];
 }
