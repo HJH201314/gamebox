@@ -10,7 +10,7 @@
 #include "global.h"
 
 #define BLOCK_SYMBOL 'o'
-#define BLOCK_COUNT 7
+#define BLOCK_COUNT 8
 
 extern int width_flex;
 extern int height_flex;
@@ -18,19 +18,16 @@ extern char cWin[HEIGHT][WIDTH];
 
 //局部函数声明
 static int getKeyPress();
-
 static void initGame();
-
+static void clearBlock();
 static void drawBlock();
-
 static int goBlock();
-
 static void rotateBlock();
-
 static void eliminateLine();
-
+static int isMovableDown();
+static int isMovableLeft();
+static int isMovableRight();
 static int hasBlock(unsigned int shape, int m, int n);
-
 static int getBitPos(int m, int n);
 
 //表示一个堆的信息
@@ -52,11 +49,12 @@ static unsigned int blocklist[BLOCK_COUNT] = {
         0b0110110000000000,//反z
         0b1000100010001000,//|
         0b1000110010000000,//├
+        0b0100110001000000,//┤
         0b1100100010000000,//┌
         0b1100000000000000//test
 };//列表
 static struct block lastblock = {1, 1, 0b1111111111111111};//记录上一个块以便清除
-static struct block thisblock = {1, 1, 0b1100011000000000};//当前操作的块
+static struct block thisblock = {0, 1, 0b1100011000000000};//当前操作的块
 static struct block nextblock = {0, 1, 0b1100011000000000};//下一个块
 
 //该页面主程序
@@ -70,11 +68,16 @@ int pageTetris() {//返回0即返回mainPage
         key_result = getKeyPress();//获取返回值
         if (key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
         if (is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
-            //setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
+            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
                 eliminateLine();
                 memcpy(&thisblock, &nextblock, sizeof(nextblock));
                 nextblock.shape = blocklist[rand() % BLOCK_COUNT];
+                if (isMovableDown() == 0) {//新产生的也动不了了
+                    is_started = 0;
+                    is_failed = 1;
+                    setTips("You lose!");
+                }
             } else {
                 drawBlock();
             }
@@ -82,6 +85,17 @@ int pageTetris() {//返回0即返回mainPage
         output();
         timetick++;
         Sleep(FREQ);
+    }
+}
+
+//清除lastblock
+static void clearBlock() {
+    int i,j;
+    //清除lastblock的符号
+    for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
+        j = 16 - i;//j为从高到低第j位,含0方便计算
+        if ((lastblock.shape >> i) & 1)
+            setPoint(lastblock.x + (j - 1) / 4, lastblock.y + (j - 1) % 4, ' ');
     }
 }
 
@@ -104,6 +118,17 @@ static void drawBlock() {
 
 //让块堆往下走
 static int goBlock() {
+    if (isMovableDown()) {
+        memcpy(&lastblock, &thisblock, sizeof(thisblock));//储存thisblock信息到lastblock
+        thisblock.x++;
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+//判断是否能往下走
+static int isMovableDown() {
     int i, j;
     //判断是否还能下
     for (j = 1; j <= 4; j++) {//从第一列开始,往右边走
@@ -117,8 +142,6 @@ static int goBlock() {
             }
         }
     }
-    memcpy(&lastblock, &thisblock, sizeof(thisblock));//储存thisblock信息到lastblock
-    thisblock.x++;
     return 1;
 }
 
@@ -156,9 +179,10 @@ static void rotateBlock() {
             }
         }
     }
-    setTips(formatStrD("%d %d",2,m,n));
+    //setTips(formatStrD("%d %d",2,m,n));
     //构造新shape
     unsigned int newshape = 0b0000000000000000;
+    unsigned int oldshape = thisblock.shape;
     for (i = m; i >= 1; i--) {
         for (j = 1; j <= n; j++) {
             if (hasBlock(thisblock.shape, i, j))
@@ -167,6 +191,9 @@ static void rotateBlock() {
     }
     //设置thisblock的shape
     thisblock.shape = newshape;
+    if (!isMovableDown()) {//如果发现因为旋转动不了了就回滚
+        thisblock.shape = oldshape;
+    }
 }
 
 //判断shape(4*4)的m行n列是否为1
@@ -225,9 +252,11 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     is_failed = 0;
     //初始化中间分隔
     //width_flex = W_MAX / 3;
-    width_flex = 10;
-    height_flex = 18;
+    width_flex = 12;
+    height_flex = 20;
     //初始化当前块和将来块
+    thisblock.y = width_flex / 2;
+    nextblock.y = width_flex / 2;
     thisblock.shape = blocklist[rand() % BLOCK_COUNT];
     nextblock.shape = blocklist[rand() % BLOCK_COUNT];
     //thisblock.shape = blocklist[0];
@@ -255,7 +284,7 @@ static int getKeyPress() {
             case KEY_BOTTOM:
                 return KEY_BOTTOM;
             case KEY_RIGHT: {
-                if (is_started) {
+                if (is_started && !is_failed) {
                     //判断是否撞到已有的块或墙
                     if (!isMovableRight())
                         break;
@@ -266,7 +295,7 @@ static int getKeyPress() {
                 break;
             }
             case KEY_LEFT: {
-                if (is_started) {
+                if (is_started && !is_failed) {
                     if (!isMovableLeft())
                         break;
                     memcpy(&lastblock, &thisblock, sizeof(thisblock));
@@ -276,9 +305,12 @@ static int getKeyPress() {
                 break;
             }
             case KEY_TOP: case 'r': {
-                memcpy(&lastblock, &thisblock, sizeof(thisblock));
-                rotateBlock();//处理thisblock的shape
-                drawBlock();
+                if (is_started && !is_failed) {
+                    memcpy(&lastblock, &thisblock, sizeof(thisblock));
+                    clearBlock();//要先清除否则可能无法旋转
+                    rotateBlock();//处理thisblock的shape
+                    drawBlock();
+                }
                 break;
             }
             default:
