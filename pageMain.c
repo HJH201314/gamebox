@@ -46,10 +46,14 @@ void pageMain(){
         }
         buildFrame();
         setLineRight(1, formatStrD("You have collect %d points",1,getPoints()));
-        setLineCenter(2,"Press a number to start:");
-        setLineCenter(4,"1:Guess number(猜数字)");
-        setLineCenter(6,"2:Gluttonous snake(贪吃蛇)");
-        setLineCenter(8,"3:Tetris(俄罗斯方块)");
+        setLineCenter(3,"Press a number to start:");
+        setLineCenter(4,"按下相应的数字开始游戏:");
+        setLineCenter(6,"1:Guess number");
+        setLineCenter(7,"1:猜数字");
+        setLineCenter(9,"2:Gluttonous snake");
+        setLineCenter(10,"2:贪吃蛇");
+        setLineCenter(12,"3:Tetris");
+        setLineCenter(13,"3:俄罗斯方块");
         output();
         Sleep(FREQ);
     }

@@ -9,18 +9,37 @@
 #include <stdio.h>
 #include "global.h"
 
-#define BLOCK_SYMBOL 'o'
-#define BLOCK_COUNT 8
+#define BLOCK_SYMBOL 'o'//用于构成block的符号
+#define BLOCK_COUNT 8//预定义的block种类数量
+#define BLOCK_TOTAL_COUNT 5//包括当前block和未来blocks在内的所有blocks
 
 extern int width_flex;
 extern int height_flex;
 extern char cWin[HEIGHT][WIDTH];
 
+//表示一个堆的信息
+struct block {
+    int x;//左上顶点x
+    int y;//左上顶点y
+    unsigned int shape;//用2字节16位(short其实够了)来表示每一个点
+};
+
+typedef struct linkedBlock {
+    int x;//左上顶点x
+    int y;//左上顶点y
+    unsigned int shape;//用2字节16位来表示每一个点
+    struct linkedBlock *next;//指向下一个块
+} blocklink;
+
 //局部函数声明
 static int getKeyPress();
 static void initGame();
 static void clearBlock();
-static void drawBlock();
+static blocklink *initBlocks();
+static blocklink *delBlock(blocklink *p, int pos);
+static blocklink *insertBlock(blocklink *p, int pos, int x, int y, unsigned int shape);
+static void drawNowBlock();
+static void drawPreBlocks(blocklink *p);
 static int goBlock();
 static void rotateBlock();
 static void eliminateLine();
@@ -29,14 +48,6 @@ static int isMovableLeft();
 static int isMovableRight();
 static int hasBlock(unsigned int shape, int m, int n);
 static int getBitPos(int m, int n);
-
-//表示一个堆的信息
-struct block {
-    int x;//左上顶点x
-    int y;//左上顶点y
-    unsigned int shape;//用2字节16位(short其实够了)来表示每一个点
-};
-//TODO: 链式生成多个block
 
 //全局变量
 static int timetick = 0;
@@ -54,9 +65,8 @@ static unsigned int blocklist[BLOCK_COUNT] = {
         0b1100100010000000,//┌
         0b1100000000000000//test
 };//列表
-static struct block lastblock = {1, 1, 0b1111111111111111};//记录上一个块以便清除
-static struct block thisblock = {0, 1, 0b1100011000000000};//当前操作的块
-static struct block nextblock = {0, 1, 0b1100011000000000};//下一个块
+static blocklink *blockhead;
+static blocklink lastblock = {1,1,0b1111111111111111};
 
 //该页面主程序
 int pageTetris() {//返回0即返回mainPage
@@ -72,15 +82,20 @@ int pageTetris() {//返回0即返回mainPage
             setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
                 eliminateLine();
-                memcpy(&thisblock, &nextblock, sizeof(nextblock));
-                nextblock.shape = blocklist[rand() % BLOCK_COUNT];
+                //在节点BLOCK_TOTAL_COUNT插入新的块
+                blockhead = insertBlock(blockhead,BLOCK_TOTAL_COUNT+1,0,width_flex/2,blocklist[rand() % BLOCK_COUNT]);
+                //删除首个块
+                blockhead = delBlock(blockhead,1);
                 if (isMovableDown() == 0) {//新产生的也动不了了
                     is_started = 0;
                     is_failed = 1;
-                    setTips("You lose!");
+                    setLineLeft(height_flex+3,"Gameover!");
+                    setLineLeft(height_flex+5, formatStrD("+ %d Points.",1,score));
+                    setLineLeft(height_flex+7,"Press Enter to restart or Esc to exit.");
                 }
+                drawPreBlocks(blockhead);
             } else {
-                drawBlock();
+                drawNowBlock(blockhead);
             }
         }
         output();
@@ -89,8 +104,68 @@ int pageTetris() {//返回0即返回mainPage
     }
 }
 
-//清除lastblock
-static void clearBlock() {
+//初始化并返回一个blocklink(链表的头)
+blocklink *initBlocks() {
+    blocklink *p = (blocklink *) malloc(sizeof(blocklink));//创建链表的头
+    blocklink *temp = p;//声明一个指针指向头结点，用于遍历链表
+    int i;
+    //生成链表
+    for (i = 0; i < BLOCK_TOTAL_COUNT; i++) {
+        //创建节点并初始化
+        blocklink *a = (blocklink *) malloc(sizeof(blocklink));
+        a->x = 0;
+        a->y = width_flex / 2;
+        a->shape = blocklist[rand() % BLOCK_COUNT];
+        a->next = NULL;
+        //连接新节点和上一节点
+        temp->next = a;
+        temp = temp->next;
+    }
+    return p;
+}
+
+//删除p中的第pos个节点元素
+static blocklink *delBlock(blocklink *p, int pos) {
+    blocklink *temp = p;
+    blocklink *del = NULL;
+    int i;
+    //遍历到被删除结点的上一个结点
+    for (i = 1; i < pos; i++) {
+        temp = temp->next;
+    }
+    del = temp->next;//记录被删除结点,以防丢失
+    temp->next = temp->next->next;//删除某个结点的方法就是更改前一个结点的指针域
+    free(del);//释放该结点,防止内存泄漏
+    return p;
+}
+
+//在p的pos位置插入节点元素
+static blocklink *insertBlock(blocklink *p, int pos, int x, int y, unsigned int shape) {
+    blocklink *temp = p;//创建临时结点temp
+    blocklink *new_block = NULL;
+    int i = 0;
+    //首先找到要插入位置的上一个结点
+    for (i = 1; i < pos; i++) {
+        if (temp == NULL) {
+            //插入位置无效
+            return p;
+        }
+        temp = temp->next;
+    }
+    //创建插入结点a
+    new_block = (blocklink *) malloc(sizeof(blocklink));
+    new_block->x = x;
+    new_block->y = y;
+    new_block->shape = shape;
+    //向链表中插入结点
+    new_block->next = temp->next;
+    temp->next = new_block;
+    return p;
+}
+
+//画出当前block
+void drawNowBlock(blocklink *p) {
+    blocklink *temp = p->next;//指向第一个
     int i,j;
     //清除lastblock的符号
     for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
@@ -98,10 +173,35 @@ static void clearBlock() {
         if ((lastblock.shape >> i) & 1)
             setPoint(lastblock.x + (j - 1) / 4, lastblock.y + (j - 1) % 4, ' ');
     }
+    //画出第一个block的符号
+    for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
+        j = 16 - i;//j为从高到低第j位,含0方便计算
+        if ((temp->shape >> i) & 1)
+        setPoint(temp->x + (j - 1) / 4, temp->y + (j - 1) % 4,BLOCK_SYMBOL);
+    }
+    output();
 }
 
-//清除lastblock并且画出thisblock
-static void drawBlock() {
+//画出后面预备的blocks
+void drawPreBlocks(blocklink *p) {
+    blocklink *temp = p->next;//指向第一个即当前
+    int i, j;
+    int c = 0;
+    while (temp->next) {//存在下一个节点
+        temp = temp->next;
+        //画出thisblock的符号
+        for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
+            j = 16 - i;//j为从高到低第j位,含0方便计算
+            setPoint(3 + (j - 1) / 4, (width_flex + 5 * c + 5) + (j - 1) % 4,
+                     ((temp->shape >> i) & 1) ? BLOCK_SYMBOL : ' ');
+        }
+        c++;
+    }
+    output();
+}
+
+//清除lastblock
+static void clearBlock() {
     int i, j;
     //清除lastblock的符号
     for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
@@ -109,19 +209,13 @@ static void drawBlock() {
         if ((lastblock.shape >> i) & 1)
             setPoint(lastblock.x + (j - 1) / 4, lastblock.y + (j - 1) % 4, ' ');
     }
-    //画出thisblock的符号
-    for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
-        j = 16 - i;//j为从高到低第j位,含0方便计算
-        if ((thisblock.shape >> i) & 1)
-            setPoint(thisblock.x + (j - 1) / 4, thisblock.y + (j - 1) % 4, 'o');
-    }
 }
 
 //让块堆往下走
 static int goBlock() {
     if (isMovableDown()) {
-        memcpy(&lastblock, &thisblock, sizeof(thisblock));//储存thisblock信息到lastblock
-        thisblock.x++;
+        memcpy(&lastblock, blockhead->next, sizeof(blocklink));//储存thisblock信息到lastblock
+        blockhead->next->x++;
         return 1;
     } else {
         return 0;
@@ -135,8 +229,8 @@ static int isMovableDown() {
     for (j = 1; j <= 4; j++) {//从第一列开始,往右边走
         for (i = 5; i >= 2; i--) {//从最后一行+1开始,往上走(第一行就不用了)
             //如果下面一个点是0上面一个点是1,就要判断再往下一个点是不是非空的
-            if (!hasBlock(thisblock.shape, i, j) && hasBlock(thisblock.shape, i - 1, j)) {
-                if (getPoint(thisblock.x + i - 1, thisblock.y + j - 1) != ' ') {
+            if (!hasBlock(blockhead->next->shape, i, j) && hasBlock(blockhead->next->shape, i - 1, j)) {
+                if (getPoint(blockhead->next->x + i - 1, blockhead->next->y + j - 1) != ' ') {
                     return 0;
                 }
                 break;//只需要判断到最下面的一个
@@ -174,7 +268,7 @@ static void rotateBlock() {
     //计算有效行数m和有效列数n
     for (i = 1; i <= 4; i++) {
         for (j = 1; j <= 4; j++) {
-            if (hasBlock(thisblock.shape, i, j)) {
+            if (hasBlock(blockhead->next->shape, i, j)) {
                 if (i > m) m = i;
                 if (j > n) n = j;
             }
@@ -183,17 +277,17 @@ static void rotateBlock() {
     //setTips(formatStrD("%d %d",2,m,n));
     //构造新shape
     unsigned int newshape = 0b0000000000000000;
-    unsigned int oldshape = thisblock.shape;
+    unsigned int oldshape = blockhead->next->shape;
     for (i = m; i >= 1; i--) {
         for (j = 1; j <= n; j++) {
-            if (hasBlock(thisblock.shape, i, j))
-                newshape = setBit(newshape, getBitPos(j,m-i+1));
+            if (hasBlock(blockhead->next->shape, i, j))
+                newshape = setBit(newshape, getBitPos(j, m - i + 1));
         }
     }
     //设置thisblock的shape
-    thisblock.shape = newshape;
+    blockhead->next->shape = newshape;
     if (!isMovableDown()) {//如果发现因为旋转动不了了就回滚
-        thisblock.shape = oldshape;
+        blockhead->next->shape = oldshape;
     }
 }
 
@@ -216,8 +310,8 @@ static int isMovableRight() {
     for (i = 4; i >= 1; i--) {//从最后一行开始,往上走
         for (j = 5; j >= 2; j--) {//从最后一列+1开始,往左走(第一列就不用了)
             //如果右边一个点是0左边一个点是1,就要判断再往右一个点是不是非空的
-            if (!hasBlock(thisblock.shape, i, j) && hasBlock(thisblock.shape, i, j - 1)) {
-                if (getPoint(thisblock.x + i - 1, thisblock.y + j - 1) != ' ') {
+            if (!hasBlock(blockhead->next->shape, i, j) && hasBlock(blockhead->next->shape, i, j - 1)) {
+                if (getPoint(blockhead->next->x + i - 1, blockhead->next->y + j - 1) != ' ') {
                     return 0;
                 }
                 break;//只需要判断到最右边的一个
@@ -233,8 +327,8 @@ static int isMovableLeft() {
     for (i = 4; i >= 1; i--) {//从最后一行开始,往上走
         for (j = 0; j <= 3; j++) {//从第一列-1开始,往右走(最后一列就不用了)
             //如果左边一个点是0右边一个点是1,就要判断再往右一个点是不是非空的
-            if (!hasBlock(thisblock.shape, i, j) && hasBlock(thisblock.shape, i, j + 1)) {
-                if (getPoint(thisblock.x + i - 1, thisblock.y + j - 1) != ' ') {
+            if (!hasBlock(blockhead->next->shape, i, j) && hasBlock(blockhead->next->shape, i, j + 1)) {
+                if (getPoint(blockhead->next->x + i - 1, blockhead->next->y + j - 1) != ' ') {
                     return 0;
                 }
                 break;//只需要判断到最左边的一个
@@ -256,12 +350,7 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     width_flex = 12;
     height_flex = 20;
     //初始化当前块和将来块
-    thisblock.y = width_flex / 2;
-    nextblock.y = width_flex / 2;
-    thisblock.shape = blocklist[rand() % BLOCK_COUNT];
-    nextblock.shape = blocklist[rand() % BLOCK_COUNT];
-    //thisblock.shape = blocklist[0];
-    //nextblock.shape = blocklist[0];
+    blockhead = initBlocks();
 }
 
 //按键处理程序
@@ -278,7 +367,8 @@ static int getKeyPress() {
                     is_started = !is_started;
                     buildFrame();//清除掉提示语
                     buildFlexFrame();//设置边框
-                    drawBlock();
+                    drawNowBlock(blockhead);
+                    drawPreBlocks(blockhead);
                 }
                 break;
             }
@@ -289,9 +379,9 @@ static int getKeyPress() {
                     //判断是否撞到已有的块或墙
                     if (!isMovableRight())
                         break;
-                    memcpy(&lastblock, &thisblock, sizeof(thisblock));
-                    thisblock.y++;
-                    drawBlock();
+                    memcpy(&lastblock, blockhead->next, sizeof(blocklink));
+                    blockhead->next->y++;
+                    drawNowBlock(blockhead);
                 }
                 break;
             }
@@ -299,18 +389,19 @@ static int getKeyPress() {
                 if (is_started && !is_failed) {
                     if (!isMovableLeft())
                         break;
-                    memcpy(&lastblock, &thisblock, sizeof(thisblock));
-                    thisblock.y--;
-                    drawBlock();
+                    memcpy(&lastblock, blockhead->next, sizeof(blocklink));
+                    blockhead->next->y--;
+                    drawNowBlock(blockhead);
                 }
                 break;
             }
-            case KEY_TOP: case 'r': {
+            case KEY_TOP:
+            case 'r': {
                 if (is_started && !is_failed) {
-                    memcpy(&lastblock, &thisblock, sizeof(thisblock));
+                    memcpy(&lastblock, blockhead->next, sizeof(blocklink));
                     clearBlock();//要先清除否则可能无法旋转
                     rotateBlock();//处理thisblock的shape
-                    drawBlock();
+                    drawNowBlock(blockhead);
                 }
                 break;
             }

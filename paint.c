@@ -57,6 +57,8 @@ void gotoxy(short x, short y)//设置光标到x,y坐标
     pos.X = x;
     pos.Y = y;
     SetConsoleCursorPosition(handle, pos);
+    //system("cls");
+    //不使用清除控制台,可以避免页面闪烁
 }
 
 void randomDot(char ch) {
