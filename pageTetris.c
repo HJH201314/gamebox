@@ -11,7 +11,7 @@
 
 #define BLOCK_SYMBOL 'o'//用于构成block的符号
 #define BLOCK_COUNT 8//预定义的block种类数量
-#define BLOCK_TOTAL_COUNT 5//包括当前block和未来blocks在内的所有blocks
+#define BLOCK_TOTAL_COUNT 8//包括当前block和未来blocks在内的所有blocks
 
 extern int width_flex;
 extern int height_flex;
@@ -38,7 +38,7 @@ static void clearBlock();
 static blocklink *initBlocks();
 static blocklink *delBlock(blocklink *p, int pos);
 static blocklink *insertBlock(blocklink *p, int pos, int x, int y, unsigned int shape);
-static void drawNowBlock();
+static void drawNowBlock(blocklink *p);
 static void drawPreBlocks(blocklink *p);
 static int goBlock();
 static void rotateBlock();
