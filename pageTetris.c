@@ -36,6 +36,7 @@ struct block {
     int y;//左上顶点y
     unsigned int shape;//用2字节16位(short其实够了)来表示每一个点
 };
+//TODO: 链式生成多个block
 
 //全局变量
 static int timetick = 0;
