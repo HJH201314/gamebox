@@ -75,13 +75,16 @@ int pageTetris() {//返回0即返回mainPage
     SetConsoleTitleA("俄罗斯方块");
     initGame();
     initPage();
-    setLineCenter(H_MAX / 2, "Press Enter to Start...");
+    setLineCenter(H_MAX / 2 - 2, "Tetris");
+    setLineCenter(H_MAX / 2 - 1, "俄罗斯方块");
+    setLineCenter(H_MAX / 2 + 1, "Press Enter to Start...");
+    setLineCenter(H_MAX / 2 + 2, "按下回车键开始游戏~");
     int key_result = 0;
     while (1) {
         key_result = getKeyPress();//获取返回值
         if (key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
         if (is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
-            setTips(formatStrD("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
+            setTips(formatStr("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
                 eliminateLine();
                 //在节点BLOCK_TOTAL_COUNT插入新的块
@@ -92,7 +95,7 @@ int pageTetris() {//返回0即返回mainPage
                     is_started = 0;
                     is_failed = 1;
                     setLineLeft(height_flex+3," Gameover!");
-                    setLineLeft(height_flex+5, formatStrD(" +%d Points.",1,score));
+                    setLineLeft(height_flex+5, formatStr(" +%d Points.", 1, score));
                     setLineLeft(height_flex+7," Press Enter to restart or Esc to exit.");
                     addPoints(username,score);
                 }
@@ -195,6 +198,7 @@ void drawPreBlocks(blocklink *p) {
         //画出thisblock的符号
         for (i = 0; i < 16; i++) {//i为从低到高(右到左)第i+1位
             j = 16 - i;//j为从高到低第j位,含0方便计算
+            setLineFrom(2, formatStr("%d", 1, c + 1), (width_flex + 5 * c + 5));
             setPoint(3 + (j - 1) / 4, (width_flex + 5 * c + 5) + (j - 1) % 4,
                      ((temp->shape >> i) & 1) ? BLOCK_SYMBOL : ' ');
         }
@@ -277,7 +281,7 @@ static void rotateBlock() {
             }
         }
     }
-    //setTips(formatStrD("%d %d",2,m,n));
+    //setTips(formatStr("%d %d",2,m,n));
     //构造新shape
     unsigned int newshape = 0b0000000000000000;
     unsigned int oldshape = blockhead->next->shape;

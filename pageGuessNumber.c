@@ -40,12 +40,12 @@ int pageGuessNumber() {//返回0即返回mainPage,1就重开
     initGame();
     char key_result = 0;
     while (1) {
-        setLineCenter(midline - 4, formatStrD("Level %d (1~%d)", 2, correct_times + 1, 100 + 100 * correct_times));
+        setLineCenter(midline - 4, formatStr("Level %d (1~%d)", 2, correct_times + 1, 100 + 100 * correct_times));
         setLineCenter(midline - 2, "Please guess a number (and press Enter):");
         //setLineCenter(H_MAX/2-1, random_str);
         key_result = getKeyPress();
         if(key_result != 0) return key_result;
-        setLineRight(1, formatStrD("You have tried %d times(%d max)", 2, try_times, try_time_max));
+        setLineRight(1, formatStr("You have tried %d times(%d max)", 2, try_times, try_time_max));
         setLineCenter(midline, input_str);
 
         output();
@@ -81,15 +81,15 @@ static int getKeyPress(){
                     buildFrame();//刷新一下,否则需要很麻烦地清空某些行
                 } else if (input_num != 0) {//猜数字中Enter
                     if (input_num > random_num) {
-                        setLineCenter(midline + 2, formatStrD("%d is too big!", 1, input_num));
+                        setLineCenter(midline + 2, formatStr("%d is too big!", 1, input_num));
                         try_times++;
                     } else if (input_num < random_num) {
-                        setLineCenter(midline + 2, formatStrD("%d is too small!", 1, input_num));
+                        setLineCenter(midline + 2, formatStr("%d is too small!", 1, input_num));
                         try_times++;
                     } else {
                         addPoints(username,correct_times+1);
                         setLineCenter(midline + 1, "You are correct!!!");
-                        setLineCenter(midline+2, formatStrD("+ %d Points",1,correct_times+1));
+                        setLineCenter(midline+2, formatStr("+ %d Points", 1, correct_times + 1));
                         setLineCenter(midline + 3, "Press Enter to continue...");
                         is_correct = 1;
                     }
@@ -97,7 +97,7 @@ static int getKeyPress(){
                     if (try_times >= try_time_max) {
                         setLineCenter(midline + 1, "YOU FAILED!");
                         setLineCenter(midline + 2,
-                                      formatStrD("(Automatically restart after %ds)", 1, 1));
+                                      formatStr("(Automatically restart after %ds)", 1, 1));
                         output();
                         Sleep(1000);
                         return FLAG_RESTART;

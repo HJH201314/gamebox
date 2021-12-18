@@ -56,11 +56,11 @@ int pageGluttonousSnake() {//返回0即返回mainPage
         key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING) return key_result;
         if(is_started && timetick % ((dir%2+1)*4) == 0) {//后面一半是控制蛇的速度,但导致操作过快时撞到自己的脖子
-            setTips(formatStrD("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
+            setTips(formatStr("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
             if (goSnake() != 0) {//撞墙的时候
                 addPoints(username,snake_length - 1);
                 setLineCenterN_(midline - 2, "YOU FAILED !");
-                setLineCenterN_(midline, formatStrD("+ %d Points.", 1, snake_length - 1));
+                setLineCenterN_(midline, formatStr("+ %d Points.", 1, snake_length - 1));
                 setLineCenterN_(midline + 2, "Press Enter to restart or Esc to exit.");
                 output();
                 is_started = 0;

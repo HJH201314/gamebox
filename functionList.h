@@ -17,14 +17,14 @@ void setStrCenter(char * str,char * ch);//居中在str中放置ch,注意str可�
 void setStrRight(char * str,char * ch);//居右在str中放置ch,注意str可被设置的位置不为\0
 void resetStrCenter(char * str,char * ch);//清空原有文字并居中在str中放置ch注意str可被设置的位置不为\0
 void resetStrRight(char * str,char * ch);//清空原有文字并居右在str中放置ch注意str可被设置的位置不为\0
-char* formatStrD(char * format, int count,...);//直接返回格式化(仅%d)后的文本
+char* formatStr(char * format, int count, ...);//直接返回格式化(仅%d)后的文本
 char* connectStr(int count,...);//将count个字符串拼接起来,最长不超过wmax
 
 //paintUtils - 界面绘制相关函数
 void setLine(int line,char * ch);//将ch放入cWin的第line+1行
-void setLineFrom(int line,char * ch,int start);//将ch从start开始输出到cWin的第line+1行
 void setPoint(int x,int y,char ch);//将ch放入cWin的(x,y)
 char getPoint(int x,int y);//获取cWin[x][y]
+void setLineFrom(int line,char * ch,int start);//将ch从start开始输出到cWin的第line+1行,不占满整行
 
 #define setLineLeftN_(line,str) setLineLeftN(line,str,1,W_MAX)
 #define setLineCenterN_(line,str) setLineCenterN(line,str,1,W_MAX)
