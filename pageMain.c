@@ -14,40 +14,41 @@ void pageMain(){
     while(1){
         SetConsoleTitleA("小游戏合集");
         //示例：获取按下的键
-        if(_kbhit()) {//是否有按下键盘
-            ch = _getch();//
-            //setTips(formatStr("key:%c",1,ch));
-            //output();
-            if (ch == KEY_ESC) goto back;
-            else{
-                switch(ch){
-                    case '1': {
-                        int result = FLAG_RESTART;
-                        while (result == FLAG_RESTART) {
-                            result = pageGuessNumber();
-                        }
-                        initPage();
-                        break;
+        //if(_kbhit()) {//是否有按下键盘 !!!有BUG,如果输入中文标点会导致卡死
+//            ch = _getch();//
+//            setTips(formatStr("key:%c",1,ch));
+//            output();
+// 获取ch移动到后面
+        if (ch == KEY_ESC) goto back;
+        else{
+            switch(ch){
+                case '1': {
+                    int result = FLAG_RESTART;
+                    while (result == FLAG_RESTART) {
+                        result = pageGuessNumber();
                     }
-                    case '2': {
-                        int result = FLAG_RESTART;
-                        while (result == FLAG_RESTART) {
-                            result = pageGluttonousSnake();
-                        }
-                        initPage();
-                        break;
+                    initPage();
+                    break;
+                }
+                case '2': {
+                    int result = FLAG_RESTART;
+                    while (result == FLAG_RESTART) {
+                        result = pageGluttonousSnake();
                     }
-                    case '3': {
-                        int result = FLAG_RESTART;
-                        while (result == FLAG_RESTART) {
-                            result = pageTetris();
-                        }
-                        initPage();
-                        break;
+                    initPage();
+                    break;
+                }
+                case '3': {
+                    int result = FLAG_RESTART;
+                    while (result == FLAG_RESTART) {
+                        result = pageTetris();
                     }
+                    initPage();
+                    break;
                 }
             }
         }
+        //}
         buildFrame();
         setLineLeftN_(1, formatStr("Hello,%s!",1,username));
         setLineRightN_(1, formatStr("You have collected %d points", 1, getPoints(username)));
@@ -60,6 +61,9 @@ void pageMain(){
         setLineCenter(12,"3:Tetris");
         setLineCenter(13,"3:俄罗斯方块");
         output();
+        ch = _getch();//
+        //setTips(formatStr("key:%c",1,ch));
+        //output();
         Sleep(FREQ);
     }
     back:
