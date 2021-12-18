@@ -50,7 +50,10 @@ int pageGluttonousSnake() {//返回0即返回mainPage
     SetConsoleTitleA("贪吃蛇");
     initGame();
     initPage();
-    setLineCenter(H_MAX/2,"Press Enter to Start...");
+    setLineCenter(H_MAX / 2 - 2, "Gluttonous Snake");
+    setLineCenter(H_MAX / 2 - 1, "贪吃蛇");
+    setLineCenter(H_MAX / 2 + 1, "Press Enter to Start...");
+    setLineCenter(H_MAX / 2 + 2, "按下回车键开始游戏~");
     int key_result = 0;
     while(1) {
         key_result = getKeyPress();//获取返回值

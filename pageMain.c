@@ -16,6 +16,8 @@ void pageMain(){
         //示例：获取按下的键
         if(_kbhit()) {//是否有按下键盘
             ch = _getch();//
+            //setTips(formatStr("key:%c",1,ch));
+            //output();
             if (ch == KEY_ESC) goto back;
             else{
                 switch(ch){
