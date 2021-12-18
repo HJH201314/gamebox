@@ -22,6 +22,8 @@ static char random_str[20];//随机数转成的字符串
 
 static int getKeyPress();//执行获取键盘操作
 
+extern char *username;
+
 static void initGame() {//初始化游戏
     input_num = 0;//输入"数字"转成的长整数
     try_times = 0;
@@ -85,7 +87,7 @@ static int getKeyPress(){
                         setLineCenter(midline + 2, formatStrD("%d is too small!", 1, input_num));
                         try_times++;
                     } else {
-                        addPoints(correct_times+1);
+                        addPoints(username,correct_times+1);
                         setLineCenter(midline + 1, "You are correct!!!");
                         setLineCenter(midline+2, formatStrD("+ %d Points",1,correct_times+1));
                         setLineCenter(midline + 3, "Press Enter to continue...");

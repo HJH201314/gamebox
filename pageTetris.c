@@ -68,6 +68,8 @@ static unsigned int blocklist[BLOCK_COUNT] = {
 static blocklink *blockhead;
 static blocklink lastblock = {1,1,0b1111111111111111};
 
+extern char *username;
+
 //该页面主程序
 int pageTetris() {//返回0即返回mainPage
     SetConsoleTitleA("俄罗斯方块");
@@ -92,6 +94,7 @@ int pageTetris() {//返回0即返回mainPage
                     setLineLeft(height_flex+3," Gameover!");
                     setLineLeft(height_flex+5, formatStrD(" +%d Points.",1,score));
                     setLineLeft(height_flex+7," Press Enter to restart or Esc to exit.");
+                    addPoints(username,score);
                 }
                 drawPreBlocks(blockhead);
             } else {

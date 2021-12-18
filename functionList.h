@@ -7,6 +7,7 @@
 #define BIGPROJECT_FUNCTIONLIST_H
 
 #include "user.h"
+#include "point.h"
 
 //stringUtils - 字符串相关函数
 void initStrBlank(char * str, int size);//初始化str为空格(memset),size为str的可视长度
@@ -42,11 +43,6 @@ void buildFlexFrame();//构造中间框
 void gotoxy(short x, short y);//定位输入到(x,y)
 void output();//输出cWin
 
-//pointsUtils - 积分相关函数
-void addPoints(int n);//加积分
-void delPoints(int n);//减积分
-int getPoints();//获取积分
-
 //bitUtils - 二进制位相关函数
 int getBit(unsigned int n, int k);//获取无符号整数n的低第k位
 unsigned int setBit(unsigned int n, int k);//设置无符号整数n的低第k位为1并返回
@@ -54,5 +50,7 @@ unsigned int resetBit(unsigned int n, int k);//设置无符号整数n的低第k�
 
 //timeUtils - 时间相关函数
 char* getNowTime();//返回YYYY-DD-MM HH:mm:ss
+
+void setError(int *error, int msg);
 
 #endif //BIGPROJECT_FUNCTIONLIST_H

@@ -43,6 +43,8 @@ static struct partofsnake snake[H_MAX*W_MAX];
 static struct applesample apples[APPLE_COUNT];
 static int snake_length = 0;
 
+extern char *username;
+
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
     SetConsoleTitleA("贪吃蛇");
@@ -56,7 +58,7 @@ int pageGluttonousSnake() {//返回0即返回mainPage
         if(is_started && timetick % ((dir%2+1)*4) == 0) {//后面一半是控制蛇的速度,但导致操作过快时撞到自己的脖子
             setTips(formatStrD("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
             if (goSnake() != 0) {//撞墙的时候
-                addPoints(snake_length - 1);
+                addPoints(username,snake_length - 1);
                 setLineCenterN_(midline - 2, "YOU FAILED !");
                 setLineCenterN_(midline, formatStrD("+ %d Points.", 1, snake_length - 1));
                 setLineCenterN_(midline + 2, "Press Enter to restart or Esc to exit.");

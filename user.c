@@ -3,7 +3,7 @@
 //
 
 #include <string.h>
-#include "user.h"
+#include "global.h"
 #include "lib/sqlite3.h"
 
 extern sqlite3 *db;
@@ -36,7 +36,7 @@ int createUser(char *username, char *password, int *error) {
         sqlite3_finalize(pStmt);
         return (ret == SQLITE_DONE);
     } else {
-        *error = ERROR_EXIST;
+        setError(error,ERROR_EXIST);
         return 0;
     }
 }
@@ -53,8 +53,7 @@ int deleteUser(char *username, char *password, int *error) {
         sqlite3_finalize(pStmt);
         return (ret == SQLITE_DONE);
     } else {
-        *error = ERROR_INEXIST;
+        setError(error,ERROR_INEXIST);
         return 0;
-
     }
 }

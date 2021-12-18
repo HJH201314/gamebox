@@ -24,5 +24,8 @@
 #define FLAG_EXIT 1000//退出标识
 #define FLAG_RESTART 2000//重开标识
 
+#define ERROR_DATABASE 1000//数据库错误
+#define ERROR_EXIST 1001//已存在
+#define ERROR_INEXIST 1002//不存在
 
 #endif //BIGPROJECT_HEADLIST_H

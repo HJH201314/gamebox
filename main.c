@@ -16,6 +16,7 @@
 
 extern char esctip[];
 
+char *username = "guest";
 sqlite3 *db;//数据库
 
 int main() {
@@ -36,11 +37,12 @@ int main() {
     }
     if(!isTableExist(db,"user")) {
         sqlite3_exec(db,
-                     "CREATE TABLE user ( username TEXT, password TEXT, points INTEGER, regtime TEXT (20), logtime TEXT (20) ); ",
+                     "CREATE TABLE user ( username TEXT, password TEXT, points INTEGER DEFAULT (0), regtime TEXT (20), logtime TEXT (20) ); ",
                      NULL, NULL, NULL);
     }
-
+    //创建默认用户
     createUser("guest","123456",NULL);
+
     //设置最后一行的Esc键提示
     memset(esctip,' ',WIDTH-1);
     setStrFrom(esctip,1,"按下Esc键退出或返回上级");
@@ -54,6 +56,8 @@ int main() {
     //载入首页
     pageMain();
 
+    //退出程序时关闭数据库
+    sqlite3_close_v2(db);
     return 0;
 }
 

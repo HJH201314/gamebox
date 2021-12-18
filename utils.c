@@ -109,7 +109,7 @@ unsigned int resetBit(unsigned int n, int k) {
 }
 
 //timeUtils
-char* getNowTime() {
+char *getNowTime() {
     struct tm *newtime;
     static char buf[20] = {};
     time_t lt1;
@@ -117,6 +117,10 @@ char* getNowTime() {
     newtime = localtime(&lt1);
     strftime(buf, 20, "%Y-%m-%d %H:%M:%S", newtime);
     return buf;
+}
+
+void setError(int *error, int msg) {
+    if (error != NULL) *error = msg;
 }
 
 
