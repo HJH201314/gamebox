@@ -82,7 +82,17 @@ int pageTetris() {//返回0即返回mainPage
     int key_result = 0;
     while (1) {
         key_result = getKeyPress();//获取返回值
-        if (key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) return key_result;
+        if (key_result != FLAG_NOTHING && key_result != KEY_BOTTOM) {
+            //释放链表
+            for (int i = BLOCK_TOTAL_COUNT; i >= 1; i--) {
+                delBlock(blockhead,i);
+            }
+            //复原动态宽度和高度
+            free(blockhead);
+            height_flex = H_MAX;
+            width_flex = W_MAX;
+            return key_result;
+        }
         if (is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
             setTips(formatStr("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了

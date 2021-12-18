@@ -17,7 +17,7 @@ void setStrCenter(char * str,char * ch);//居中在str中放置ch,注意str可�
 void setStrRight(char * str,char * ch);//居右在str中放置ch,注意str可被设置的位置不为\0
 void resetStrCenter(char * str,char * ch);//清空原有文字并居中在str中放置ch注意str可被设置的位置不为\0
 void resetStrRight(char * str,char * ch);//清空原有文字并居右在str中放置ch注意str可被设置的位置不为\0
-char* formatStr(char * format, int count, ...);//直接返回格式化(仅%d)后的文本
+char* formatStr(char * format, int count, ...);//直接返回格式化后的文本
 char* connectStr(int count,...);//将count个字符串拼接起来,最长不超过wmax
 
 //paintUtils - 界面绘制相关函数

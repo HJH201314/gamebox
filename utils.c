@@ -71,7 +71,7 @@ void resetStrRight(char *str, char *ch) {//清空原有文字并居右在str中�
     }
 }
 
-char *formatStr(char *format, int count, ...) {//直接返回格式化(仅%d)后的文本
+char *formatStr(char *format, int count, ...) {//直接返回格式化后的文本
     static char result[W_MAX + 1] = "";
     va_list vaList;
     va_start(vaList, count);

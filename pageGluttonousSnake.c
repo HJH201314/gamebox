@@ -56,7 +56,7 @@ int pageGluttonousSnake() {//返回0即返回mainPage
         key_result = getKeyPress();//获取返回值
         if(key_result != FLAG_NOTHING) return key_result;
         if(is_started && timetick % ((dir%2+1)*4) == 0) {//后面一半是控制蛇的速度,但导致操作过快时撞到自己的脖子
-            setTips(formatStr("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
+            //setTips(formatStr("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
             if (goSnake() != 0) {//撞墙的时候
                 addPoints(username,snake_length - 1);
                 setLineCenterN_(midline - 2, "YOU FAILED !");
@@ -157,7 +157,8 @@ static void generateApple() {
 //蛇前进程序
 static int goSnake() {//返回0为正常,1为碰壁
     int tempdir = 0;
-    for(int i = snake_length - 1; i >= 0; i--) {//遍历蛇
+    //遍历蛇并移动每一个元素
+    for(int i = snake_length - 1; i >= 0; i--) {
         tempdir = (i == 0) ? dir : snake[i-1].lastdir;//除了头以外,都取上一点的方向
         switch(tempdir) {
             case 1:snake[i].x--;break;
@@ -166,9 +167,11 @@ static int goSnake() {//返回0为正常,1为碰壁
             case 4:snake[i].y++;break;
         }
         snake[i].lastdir = tempdir;
+        //如果移动后要出界了就结束
         if(snake[i].x < 1 || snake[i].x > H_MAX || snake[i].y < 1 || snake[i].y > W_MAX)
             return 1;
     }
+    //如果蛇长不为1并且撞到了自己就结束
     if(snake_length != 1 && getPoint(snake[0].x,snake[0].y) == SYMBOL_SNAKE_BODY) {//上一刻
         return 1;
     }
