@@ -91,7 +91,7 @@ char getPoint(int x,int y){
     }
 }
 
-void setLine(int line,char * ch){
+void setLine(int line,char * ch){//从cWin[]开头输出,不占满整行
     int len = (int)strlen(ch);//取回有效字符数
     if(line > 0 && line <= H_MAX) {//不能超过列最大值
         for(int i = 1;i <= len;i++) {
@@ -103,25 +103,56 @@ void setLine(int line,char * ch){
     }
 }
 
-void setLineLeft(int line,char * ch) {//直接在某行左侧输出
+void setLineFrom(int line,char * ch,int start) {//从cWin[]的第start位输出,不占满整行
+    int len = (int)strlen(ch);//取回有效字符数
+    if(line > 0 && line <= H_MAX && start > 0 && start <= W_MAX) {//不能超过列最大值
+        for(int i = 0;i < len;i++) {
+            if(i > W_MAX){
+                break;//不能超过行最大值
+            }
+            cWin[line][i+start] = ch[i];//写入字符
+        }
+    }
+}
+
+void setLineLeft(int line,char * ch) {//在某行左侧输出,占满整行
     char str[W_MAX + 1];
     initStrBlank(str, W_MAX);
     setStrFrom(str,1,ch);
     setLine(line,str);
 }
 
-void setLineCenter(int line,char * ch) {//直接在某行中间输出
+//在某行某范围居左输出,不占满整行
+void setLineLeftN(int line, char *str, int rangeA, int rangeB) {
+    setLineFrom(line,str,1);
+}
+
+void setLineCenter(int line,char * ch) {//在某行中间输出,占满整行
     char str[W_MAX + 1];
     initStrBlank(str, W_MAX);
     resetStrCenter(str,ch);
     setLine(line,str);
 }
 
-void setLineRight(int line,char * ch) {//直接在某行右侧输出
+//在某行居中输出,不占满整行
+void setLineCenterN(int line, char *str, int rangeA, int rangeB) {
+    int len_ch = (int)strlen(str);
+    int start = (rangeB - rangeA - len_ch) / 2 + 1;//下标开始处
+    setLineFrom(line,str,start);
+}
+
+void setLineRight(int line,char * ch) {//在某行右侧输出,占满整行
     char str[W_MAX + 1];
     initStrBlank(str, W_MAX);
     resetStrRight(str,ch);
     setLine(line,str);
+}
+
+//在某行居右输出,不占满整行
+void setLineRightN(int line, char *str, int rangeA, int rangeB) {
+    int len_ch = (int)strlen(str);
+    int start = W_MAX - len_ch + 1;//下标开始处
+    setLineFrom(line,str,start);
 }
 
 void setTips(char * str) {

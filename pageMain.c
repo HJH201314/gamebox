@@ -45,7 +45,7 @@ void pageMain(){
             }
         }
         buildFrame();
-        setLineRight(1, formatStrD("You have collect %d points",1,getPoints()));
+        setLineRightN_(1, formatStrD("You have collected %d points",1,getPoints()));
         setLineCenter(3,"Press a number to start:");
         setLineCenter(4,"按下相应的数字开始游戏:");
         setLineCenter(6,"1:Guess number");

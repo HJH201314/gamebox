@@ -57,9 +57,9 @@ int pageGluttonousSnake() {//返回0即返回mainPage
             setTips(formatStrD("Length:%d Timetick:%d", 2, snake_length, timetick));//先输出提示再走蛇,否则有问题
             if (goSnake() != 0) {//撞墙的时候
                 addPoints(snake_length - 1);
-                setLineCenter(midline - 2, "YOU FAILED!");
-                setLineCenter(midline, formatStrD("+ %d Points.", 1, snake_length - 1));
-                setLineCenter(midline + 2, "Press Enter to restart or Esc to exit.");
+                setLineCenterN_(midline - 2, "YOU FAILED !");
+                setLineCenterN_(midline, formatStrD("+ %d Points.", 1, snake_length - 1));
+                setLineCenterN_(midline + 2, "Press Enter to restart or Esc to exit.");
                 output();
                 is_started = 0;
                 is_failed = 1;

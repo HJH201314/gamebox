@@ -11,7 +11,7 @@
 
 #define BLOCK_SYMBOL 'o'//用于构成block的符号
 #define BLOCK_COUNT 8//预定义的block种类数量
-#define BLOCK_TOTAL_COUNT 8//包括当前block和未来blocks在内的所有blocks
+#define BLOCK_TOTAL_COUNT 6//包括当前block和未来blocks在内的所有blocks
 
 extern int width_flex;
 extern int height_flex;
@@ -89,9 +89,9 @@ int pageTetris() {//返回0即返回mainPage
                 if (isMovableDown() == 0) {//新产生的也动不了了
                     is_started = 0;
                     is_failed = 1;
-                    setLineLeft(height_flex+3,"Gameover!");
-                    setLineLeft(height_flex+5, formatStrD("+ %d Points.",1,score));
-                    setLineLeft(height_flex+7,"Press Enter to restart or Esc to exit.");
+                    setLineLeft(height_flex+3," Gameover!");
+                    setLineLeft(height_flex+5, formatStrD(" +%d Points.",1,score));
+                    setLineLeft(height_flex+7," Press Enter to restart or Esc to exit.");
                 }
                 drawPreBlocks(blockhead);
             } else {
