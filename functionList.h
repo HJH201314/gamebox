@@ -6,6 +6,8 @@
 #ifndef BIGPROJECT_FUNCTIONLIST_H
 #define BIGPROJECT_FUNCTIONLIST_H
 
+#include "user.h"
+
 //stringUtils - 字符串相关函数
 void initStrBlank(char * str, int size);//初始化str为空格(memset),size为str的可视长度
 void clearStr(char * str);//将str前面不为\0的元素设置为空格(strlen)
@@ -49,5 +51,8 @@ int getPoints();//获取积分
 int getBit(unsigned int n, int k);//获取无符号整数n的低第k位
 unsigned int setBit(unsigned int n, int k);//设置无符号整数n的低第k位为1并返回
 unsigned int resetBit(unsigned int n, int k);//设置无符号整数n的低第k位为0并返回
+
+//timeUtils - 时间相关函数
+char* getNowTime();//返回YYYY-DD-MM HH:mm:ss
 
 #endif //BIGPROJECT_FUNCTIONLIST_H

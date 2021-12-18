@@ -155,19 +155,23 @@ void setLineRightN(int line, char *str, int rangeA, int rangeB) {
     setLineFrom(line,str,start);
 }
 
+//设置tips
 void setTips(char * str) {
     if(strlen(str) <= WIDTH - 1) {
         setStrFrom(tips,1,str);
     }
 }
 
-void initPage() {//初始化页面
+//初始化页面,包含清空tips和构造框架
+void initPage() {
     memset(tips,' ',WIDTH-1);
     buildFrame();
 }
 
 void output() {
-    printf("%s",(char *)cWin);//将cWin数组输出
+    //输出cWin数组
+    printf("%s",(char *)cWin);
+    //输出提示和esc提示
     if(tips[0] != ' ') {
         printf("\n%s",(char *)tips);
         printf("\n%s",(char *)esctip);
@@ -175,7 +179,7 @@ void output() {
         printf("\n%s",(char *)esctip);
         printf("\n%s",(char *)tips);
     }
-
+    //移动光标
     gotoxy(0,0);
 }
 
