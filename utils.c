@@ -71,8 +71,8 @@ void resetStrRight(char *str, char *ch) {//清空原有文字并居右在str中�
     }
 }
 
-char *formatStr(char *format, int count, ...) {//直接返回格式化后的文本
-    static char result[W_MAX + 1] = "";
+char *formatStr(char *format, int count, ...) {//直接返回格式化后的文本,最长不超过128
+    static char result[128] = "";//提供128字节的缓冲区
     va_list vaList;
     va_start(vaList, count);
     vsprintf(result, format, vaList);
@@ -80,11 +80,11 @@ char *formatStr(char *format, int count, ...) {//直接返回格式化后的文�
     return result;
 }
 
-char *connectStr(int count, ...) {//将count个字符串拼接起来,最长不超过wmax
+char *connectStr(int count, ...) {//将count个字符串拼接起来,最长不超过128
     int i;
     va_list vaList;
     va_start(vaList, count);
-    static char result[W_MAX + 1] = "";
+    static char result[128] = "";//提供128字节的缓冲区
     for (i = 0; i < count; i++)
         strcat(result, va_arg(vaList, char*));
     va_end(vaList);
@@ -109,7 +109,7 @@ unsigned int resetBit(unsigned int n, int k) {
 }
 
 //timeUtils
-char *getNowTime() {
+char *getNowTime() {//获取当前时间的文本
     struct tm *newtime;
     static char buf[20] = {};
     time_t lt1;
@@ -117,6 +117,22 @@ char *getNowTime() {
     newtime = localtime(&lt1);
     strftime(buf, 20, "%Y-%m-%d %H:%M:%S", newtime);
     return buf;
+}
+
+char *getTimePeriod() {//获取当前时间段
+    time_t lt1;
+    lt1 = time(NULL);
+    struct tm *newtime;
+    newtime = localtime(&lt1);
+    if (newtime->tm_hour < 6) {
+        return TIMEPERIOD_BEFORE_DAWN;
+    } else if (newtime->tm_hour < 11) {
+        return TIMEPERIOD_MORNING;
+    } else if (newtime->tm_hour < 14) {
+        return TIMEPERIOD_NOON;
+    } else if (newtime->tm_hour < 19) {
+        return TIMEPERIOD_AFTERNOON;
+    } else return TIMEPERIOD_NIGHT;
 }
 
 void setError(int *error, int msg) {

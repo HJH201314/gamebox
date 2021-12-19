@@ -11,7 +11,6 @@
 #include <stdarg.h>
 #include <windows.h>
 #include "lib/sqlite3.h"
-#include "sqlUtils.h"
 #include "global.h"
 
 extern char esctip[];
@@ -32,7 +31,7 @@ int main() {
     //新建表
     if(!isTableExist(db,"record")) {
         sqlite3_exec(db,
-                     "CREATE TABLE record ( gamename TEXT, username TEXT, score INTEGER, points INTEGER, time TEXT (20) ); ",
+                     "CREATE TABLE record ( game INTEGER, username TEXT, score INTEGER, points INTEGER, time TEXT (20) ); ",
                      NULL, NULL, NULL);
     }
     if(!isTableExist(db,"user")) {

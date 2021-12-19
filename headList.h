@@ -24,6 +24,12 @@
 #define FLAG_EXIT 1000//退出标识
 #define FLAG_RESTART 2000//重开标识
 
+#define TIMEPERIOD_BEFORE_DAWN "凌晨"
+#define TIMEPERIOD_MORNING "上午"
+#define TIMEPERIOD_NOON "中午"
+#define TIMEPERIOD_AFTERNOON "下午"
+#define TIMEPERIOD_NIGHT "晚上"
+
 #define ERROR_DATABASE 1000//数据库错误
 #define ERROR_EXIST 1001//已存在
 #define ERROR_INEXIST 1002//不存在

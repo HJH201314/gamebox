@@ -46,6 +46,11 @@ void pageMain(){
                     initPage();
                     break;
                 }
+                case 'u': {
+                    pageUser();
+                    initPage();
+                    break;
+                }
             }
         }
         //}
@@ -54,12 +59,14 @@ void pageMain(){
         setLineRightN_(1, formatStr("You have collected %d points", 1, getPoints(username)));
         setLineCenter(3,"Press a number to start:");
         setLineCenter(4,"按下相应的数字开始游戏:");
-        setLineCenter(6,"1:Guess number");
-        setLineCenter(7,"1:猜数字");
-        setLineCenter(9,"2:Gluttonous snake");
-        setLineCenter(10,"2:贪吃蛇");
-        setLineCenter(12,"3:Tetris");
-        setLineCenter(13,"3:俄罗斯方块");
+        setLineCenter(6,"(1)Guess number");
+        setLineCenter(7,"(1)猜数字");
+        setLineCenter(9,"(2)Gluttonous snake");
+        setLineCenter(10,"(2)贪吃蛇");
+        setLineCenter(12,"(3)Tetris");
+        setLineCenter(13,"(3)俄罗斯方块");
+        setLineLeftN_(H_MAX,"(u)进入用户中心");
+        setLineRightN_(H_MAX,"(i)进入游戏设置");
         output();
         ch = _getch();//
         //setTips(formatStr("key:%c",1,ch));

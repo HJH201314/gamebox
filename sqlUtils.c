@@ -3,6 +3,7 @@
 //
 
 #include <string.h>
+#include "global.h"
 #include "lib/sqlite3.h"
 
 int isTableExist(sqlite3 *db, char *tablename) {
@@ -16,4 +17,18 @@ int isTableExist(sqlite3 *db, char *tablename) {
     int ret = sqlite3_column_int (pStmt, 0);
     sqlite3_finalize (pStmt);
     return (ret != 0);
+}
+
+//通过完整的sql获取记录集的行数,失败返回-1,成功返回行数
+int getResultRows(sqlite3 *db, char *expandedSql) {
+    sqlite3_stmt *pStmt;
+    sqlite3_prepare(db, formatStr("SELECT COUNT(*) FROM (%s)",1,expandedSql),-1,&pStmt,0);
+    if (pStmt == 0)
+        return -1;
+    if (sqlite3_step(pStmt) != SQLITE_ROW)
+        return -1;
+    sqlite3_step(pStmt);
+    int ret = sqlite3_column_int(pStmt,0);
+    sqlite3_finalize(pStmt);
+    return ret;
 }
