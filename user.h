@@ -20,6 +20,6 @@ typedef struct {
 
 int addRecord(char *username, int gameid, int score, int points);
 
-int getRecord(char *username, char *condition, int count, int page, GameRecord **pGameRecord);
+GameRecord *getRecord(char *username, int count, int page, int *ret);
 
 #endif //BIGPROJECT_USER_H

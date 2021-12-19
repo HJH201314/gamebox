@@ -108,6 +108,7 @@ int pageTetris() {//返回0即返回mainPage
                     setLineLeft(height_flex+5, formatStr(" +%d Points.", 1, score));
                     setLineLeft(height_flex+7," Press Enter to restart or Esc to exit.");
                     addPoints(username,score);
+                    addRecord(username,GAMEID_TETRIS,score,score);
                 }
                 drawPreBlocks(blockhead);
             } else {

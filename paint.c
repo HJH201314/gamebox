@@ -160,6 +160,7 @@ void setTips(char * str) {
     if(strlen(str) <= WIDTH - 1) {
         setStrFrom(tips,1,str);
     }
+    output();
 }
 
 //初始化页面,包含清空tips和构造框架

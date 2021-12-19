@@ -25,9 +25,7 @@ int getResultRows(sqlite3 *db, char *expandedSql) {
     sqlite3_prepare(db, formatStr("SELECT COUNT(*) FROM (%s)",1,expandedSql),-1,&pStmt,0);
     if (pStmt == 0)
         return -1;
-    if (sqlite3_step(pStmt) != SQLITE_ROW)
-        return -1;
-    sqlite3_step(pStmt);
+    sqlite3_step(pStmt);//到第一行
     int ret = sqlite3_column_int(pStmt,0);
     sqlite3_finalize(pStmt);
     return ret;

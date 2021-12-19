@@ -79,29 +79,32 @@ int addRecord(char *username, int gameid, int score, int points) {
     }
 }
 
-int getRecord(char *username, char *condition, int count, int page, GameRecord **pGameRecord) {//
+GameRecord *getRecord(char *username, int count, int page, int *ret) {//
     if (isUserExist(username)) {
         sqlite3_stmt *pStmt;
-        const char *sql = "SELECT game,score,points,time FROM record";
-        sqlite3_prepare_v2(db, (condition != NULL ? connectStr(3, sql, " WHERE ", condition) : sql), -1, &pStmt, 0);
+        char *sql = "SELECT game,score,points,time FROM record WHERE username=? LIMIT %d OFFSET %d";
+        sqlite3_prepare_v2(db, formatStr(sql, 2, count, count * (page - 1)), -1, &pStmt, 0);
         if (pStmt == 0)
-            return 0;
+            return NULL;
+        sqlite3_bind_text(pStmt, 1, username, -1, NULL);
         char *newsql = sqlite3_expanded_sql(pStmt);
-        int ret = getResultRows(db, newsql);
-        if (ret > 0) {
-            sqlite3_step(pStmt);
-            **pGameRecord = *(GameRecord *) malloc(sizeof(GameRecord) * ret);//分配空间
+        *ret = getResultRows(db, newsql);
+        static GameRecord *gr;
+        gr = malloc(sizeof(GameRecord) * (*ret));//分配空间
+        if (*ret > 0) {
+            //sqlite3_step(pStmt);
             int c = 0;
-            while (sqlite3_step(pStmt)) {
-                pGameRecord[c]->game = sqlite3_column_int(pStmt,0);
-                pGameRecord[c]->score = sqlite3_column_int(pStmt,1);
-                pGameRecord[c]->points = sqlite3_column_int(pStmt,2);
-                strcpy(pGameRecord[c]->time,(char *)sqlite3_column_text(pStmt,3));
+            while (sqlite3_step(pStmt) == SQLITE_ROW) {
+                gr[c].game = sqlite3_column_int(pStmt, 0);
+                gr[c].score = sqlite3_column_int(pStmt, 1);
+                gr[c].points = sqlite3_column_int(pStmt, 2);
+                strcpy(gr[c].time, (char *) sqlite3_column_text(pStmt, 3));
+                c++;
             }
         }
         sqlite3_finalize(pStmt);
-        return ret;
+        return gr;
     } else {
-        return 0;
+        return NULL;
     }
 }

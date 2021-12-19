@@ -55,4 +55,6 @@ char *getTimePeriod();//获取当前时间段(凌晨、上午、中午、下午�
 
 void setError(int *error, int msg);
 
+char *getGameNameById(int gameid);//通过游戏id获得游戏名
+
 #endif //BIGPROJECT_FUNCTIONLIST_H

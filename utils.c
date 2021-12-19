@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "headList.h"
+#include "global.h"
 
 void initStrBlank(char *str, int size) {//初始化str为空格
     //memset设置内存
@@ -137,6 +138,17 @@ char *getTimePeriod() {//获取当前时间段
 
 void setError(int *error, int msg) {
     if (error != NULL) *error = msg;
+}
+
+char *getGameNameById(int gameid) {
+    switch (gameid) {
+        case GAMEID_GLUTTONOUSSNAKE:
+            return GAMENAME_GLUTTONOUSSNAKE;
+        case GAMEID_GUESSNUMBER:
+            return GAMENAME_GUESSNUMBER;
+        case GAMEID_TETRIS:
+            return GAMENAME_TETRIS;
+    }
 }
 
 
