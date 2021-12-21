@@ -79,7 +79,26 @@ int addRecord(char *username, int gameid, int score, int points) {
     }
 }
 
-GameRecord *getRecord(char *username, int count, int page, int *ret) {//
+//获取记录数的最大页码
+int getRecordPageCount(char *username, int count) {
+    if (isUserExist(username)) {
+        sqlite3_stmt *pStmt;
+        char *sql = "SELECT game,score,points,time FROM record WHERE username=?";
+        sqlite3_prepare_v2(db, sql, -1, &pStmt, 0);
+        if (pStmt == 0)
+            return -1;
+        sqlite3_bind_text(pStmt, 1, username, -1, NULL);
+        char *newsql = sqlite3_expanded_sql(pStmt);
+        int ret = getResultRows(db, newsql);
+        sqlite3_finalize(pStmt);
+        return ret / count + 1;
+    } else {
+        return -1;
+    }
+}
+
+//获取username的游戏记录
+GameRecord *getRecord(char *username, int count, int page, int *ret) {
     if (isUserExist(username)) {
         sqlite3_stmt *pStmt;
         char *sql = "SELECT game,score,points,time FROM record WHERE username=? LIMIT %d OFFSET %d";

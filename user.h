@@ -22,4 +22,6 @@ int addRecord(char *username, int gameid, int score, int points);
 
 GameRecord *getRecord(char *username, int count, int page, int *ret);
 
+int getRecordPageCount(char *username, int count);
+
 #endif //BIGPROJECT_USER_H

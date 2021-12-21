@@ -59,8 +59,12 @@ static int getKeyPress(){
     if (_kbhit()) {//是否有按下键盘
         ch = _getch();//
         switch (ch) {
-            case KEY_ESC://按下Esc,退出page
+            case KEY_ESC: {//按下Esc,退出page
+                if (correct_times != 0) {
+                    addRecord(username,GAMEID_GUESSNUMBER,correct_times,sumDown(correct_times)+correct_times);
+                }
                 return FLAG_EXIT;
+            }
             case KEY_BACK: {//按下退格,删除输入数字中的最后一位
                 int len_input = (int) strlen(input_str);
                 if (len_input >= 1)
@@ -89,7 +93,7 @@ static int getKeyPress(){
                     } else {
                         addPoints(username,correct_times+1);
                         setLineCenter(midline + 1, "You are correct!!!");
-                        setLineCenter(midline+2, formatStr("+ %d Points", 1, correct_times + 1));
+                        setLineCenter(midline + 2, formatStr("+ %d Points", 1, correct_times + 1));
                         setLineCenter(midline + 3, "Press Enter to continue...");
                         is_correct = 1;
                     }

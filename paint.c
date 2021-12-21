@@ -157,7 +157,10 @@ void setLineRightN(int line, char *str, int rangeA, int rangeB) {
 
 //设置tips
 void setTips(char * str) {
-    if(strlen(str) <= WIDTH - 1) {
+    int len = (int)strlen(str);
+    if (len == 0) {
+        memset(tips,' ',WIDTH-1);
+    } else if(len <= WIDTH - 1) {
         setStrFrom(tips,1,str);
     }
     output();

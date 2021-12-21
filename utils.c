@@ -151,5 +151,14 @@ char *getGameNameById(int gameid) {
     }
 }
 
+//mathUtils
+//累加1+2+...+n
+int sumDown(int n) {
+    int sum = 1;
+    for (int i = 2; i <= n; i++) {
+        sum += i;
+    }
+    return sum;
+}
 
 #endif //BIGPROJECT_UTILS_C

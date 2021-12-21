@@ -57,4 +57,6 @@ void setError(int *error, int msg);
 
 char *getGameNameById(int gameid);//通过游戏id获得游戏名
 
+int sumDown(int n);//1+2+...+n
+
 #endif //BIGPROJECT_FUNCTIONLIST_H
