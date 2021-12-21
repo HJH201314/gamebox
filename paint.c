@@ -107,7 +107,7 @@ void setLineFrom(int line,char * ch,int start) {//从cWin[]的第start位输出,
     int len = (int)strlen(ch);//取回有效字符数
     if(line > 0 && line <= H_MAX && start > 0 && start <= W_MAX) {//不能超过列最大值
         for(int i = 0;i < len;i++) {
-            if(i > W_MAX){
+            if(i+start > W_MAX){
                 break;//不能超过行最大值
             }
             cWin[line][i+start] = ch[i];//写入字符
@@ -158,9 +158,8 @@ void setLineRightN(int line, char *str, int rangeA, int rangeB) {
 //设置tips
 void setTips(char * str) {
     int len = (int)strlen(str);
-    if (len == 0) {
-        memset(tips,' ',WIDTH-1);
-    } else if(len <= WIDTH - 1) {
+    memset(tips,' ',WIDTH-1);
+    if(len <= WIDTH - 1) {
         setStrFrom(tips,1,str);
     }
     output();
