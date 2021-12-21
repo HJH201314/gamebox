@@ -45,8 +45,10 @@ int deleteUser(char *username, char *password, int *error) {
     if (isUserExist(username)) {
         sqlite3_stmt *pStmt;
         sqlite3_prepare_v2(db, "DELETE FROM user WHERE username=? AND password=?", -1, &pStmt, 0);
-        if (pStmt == 0)
+        if (pStmt == 0) {
+            setError(error,ERROR_DATABASE);
             return 0;
+        }
         sqlite3_bind_text(pStmt, 1, username, -1, NULL);
         sqlite3_bind_text(pStmt, 2, password, -1, NULL);
         int ret = sqlite3_step(pStmt);
@@ -55,6 +57,46 @@ int deleteUser(char *username, char *password, int *error) {
     } else {
         setError(error, ERROR_INEXIST);
         return 0;
+    }
+}
+
+//登录,返回值包括1-成功/0-错误/ERROR_
+int login(char *username, char *password) {
+    if (isUserExist(username)) {
+        sqlite3_stmt *pStmt;
+        sqlite3_prepare_v2(db, "SELECT * FROM user WHERE username=? AND password=?", -1, &pStmt, 0);
+        if (pStmt == 0) {
+            return ERROR_DATABASE;
+        }
+        sqlite3_bind_text(pStmt, 1, username, -1, NULL);
+        sqlite3_bind_text(pStmt, 2, password, -1, NULL);
+        int ret = 0;
+        if(sqlite3_step(pStmt) == SQLITE_ROW) {
+            ret = 1;
+        }
+        sqlite3_finalize(pStmt);
+        return ret;
+    } else {
+        return ERROR_INEXIST;
+    }
+}
+
+//修改密码,传入username和newpassword,返回值包括1-成功/ERROR_
+int changePwd(char *username, char *password) {
+    if (isUserExist(username)) {
+        sqlite3_stmt *pStmt;
+        sqlite3_prepare_v2(db, "UPDATE user SET password=?1 WHERE username=?", -1, &pStmt, 0);
+        if (pStmt == 0) {
+            return ERROR_DATABASE;
+        }
+        sqlite3_bind_text(pStmt, 2, username, -1, NULL);
+        sqlite3_bind_text(pStmt, 1, password, -1, NULL);
+        char *sql = sqlite3_expanded_sql(pStmt);
+        sqlite3_finalize(pStmt);
+        sqlite3_exec(db,sql,NULL,NULL,NULL);
+        return 1;
+    } else {
+        return ERROR_INEXIST;
     }
 }
 

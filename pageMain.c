@@ -69,8 +69,7 @@ void pageMain(){
         setLineRightN_(H_MAX,"(i)进入游戏设置");
         output();
         ch = _getch();//
-        //setTips(formatStr("key:%c",1,ch));
-        //output();
+        setTips(formatStr("d:%d c:%c",2,(int)ch,ch));
         Sleep(FREQ);
     }
     back:

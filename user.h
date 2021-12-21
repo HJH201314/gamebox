@@ -11,6 +11,10 @@ int createUser(char *username, char *password, int *error);
 
 int deleteUser(char *username, char *password, int *error);
 
+int login(char *username, char *password);
+
+int changePwd(char *username, char *password);
+
 typedef struct {
     int game;
     int score;

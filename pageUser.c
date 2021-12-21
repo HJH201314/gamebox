@@ -28,6 +28,8 @@ int pageUser() {
             case KEY_ESC: return FLAG_EXIT;
             case '1':
                 subpageGameRecord();break;
+            case '2':
+                subpageChangePwd();break;
         }
         initPage();
         drawPageUser();
@@ -95,6 +97,9 @@ static void drawSubpageGameData() {
     free(gr);
 }
 
+static char pwd[129];//支持128位密码
+static char pwd_t[129];//临时保存密码
+static int progress_changepwd = 1;//1-验证旧密码;2-输入新密码;3-重复输入新密码
 //主控 - 修改密码子界面
 static int subpageChangePwd() {
     initPage();
@@ -105,7 +110,56 @@ static int subpageChangePwd() {
         SetConsoleTitleA("修改密码");
         switch (ch) {
             case KEY_ESC: return FLAG_EXIT;
+            case KEY_BACK: {
+                int len = (int)strlen(pwd);
+                if (len >= 1) {//如果至少有一位密码
+                    pwd[len - 1] = '\0';//删除最后一位
+                }
+            }
+            case KEY_ENTER: {
+                if (strlen(pwd) > 0) {//输入了密码
+                    switch (progress_changepwd) {
+                        case 1: {//验证阶段
+                            if (login(username,pwd) == 1) {//验证成功
+                                progress_changepwd++;
+                                setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
+                            }
+                            break;
+                        }
+                        case 2: {//输入新密码
+                            progress_changepwd++;
+                            memcpy(pwd_t,pwd,128);
+                            setLineCenter(H_MAX / 2 - 1, "请再次输入您的新密码:");
+                            break;
+                        }
+                        case 3: {
+                            if (strcmp(pwd,pwd_t) == 0) {//两次输入的密码相同
+                                progress_changepwd++;
+                                if (changePwd(username,pwd) == 1) {
+                                    buildFrame();
+                                    setLineCenter(H_MAX / 2, "密码修改成功!");
+                                } else {
+                                    setTips("修改密码失败,请检查数据库!");
+                                }
+                            }
+                            break;
+                        }
+                        default: return FLAG_EXIT;
+                    }
+                    memset(pwd,'\0',128);
+                }
+            }
         }
+        if (ch >= 32 && ch <= 126) {//正确的字符
+            if (strlen(pwd) <= 127) {//如果不超过127位,则添加字符
+                char p[2] = {};
+                p[0] = (char)ch;
+                strcat(pwd,p);
+            } else {
+                setTips("密码最多只能输入128位哦~");
+            }
+        }
+        setLineCenter(H_MAX / 2 + 1, pwd);
         output();
         ch = _getch();
     }
@@ -113,5 +167,5 @@ static int subpageChangePwd() {
 
 //显示 - 修改密码子界面
 static void drawSubpageChangePwd() {
-
+    setLineCenter(H_MAX / 2 - 1, "请输入您的旧密码:");
 }

@@ -15,6 +15,7 @@
 #define KEY_BACK 8//Backspace的键值
 #define KEY_ENTER 13//Enter的键值
 #define KEY_ESC 27//Esc的键值
+#define KEY_DIR_FLAG 224//224为控制符的前置标志
 #define KEY_TOP 72//上
 #define KEY_LEFT 75//左
 #define KEY_BOTTOM 80//下
@@ -30,8 +31,8 @@
 #define TIMEPERIOD_AFTERNOON "下午"
 #define TIMEPERIOD_NIGHT "晚上"
 
-#define ERROR_DATABASE 1000//数据库错误
-#define ERROR_EXIST 1001//已存在
-#define ERROR_INEXIST 1002//不存在
+#define ERROR_DATABASE -1000//数据库错误
+#define ERROR_EXIST -1001//已存在
+#define ERROR_INEXIST -1002//不存在
 
 #endif //BIGPROJECT_HEADLIST_H
