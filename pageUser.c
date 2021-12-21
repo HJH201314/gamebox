@@ -7,9 +7,9 @@
 
 #include "global.h"
 
-void drawPageUser();
-int subpageGameRecord();
-void drawSubpageGameData();
+static void drawPageUser();
+static int subpageGameRecord();
+static void drawSubpageGameData();
 
 extern char *username;
 
@@ -33,7 +33,7 @@ int pageUser() {
 }
 
 //user界面的提示
-void drawPageUser() {
+static void drawPageUser() {
     setLineCenter(H_MAX / 2 - 2, formatStr("%s好,%s!",2,getTimePeriod(),username));
     setLineCenter(H_MAX / 2,"(1)游戏数据 (2)修改密码");
     setLineCenter(H_MAX / 2 + 2,"(3)切换帐号 (4)鹅鹅鹅鹅");
@@ -41,7 +41,8 @@ void drawPageUser() {
 
 static int subpageGameRecord_page = 1;
 
-int subpageGameRecord() {
+//游戏记录子界面
+static int subpageGameRecord() {
     initPage();
     drawSubpageGameData();
     output();
@@ -51,7 +52,7 @@ int subpageGameRecord() {
         ch = _getch();
         switch (ch) {
             case KEY_ESC: return FLAG_EXIT;
-            case KEY_TOP: {
+            case KEY_TOP: case KEY_LEFT: {
                 if (subpageGameRecord_page - 1 >= 1) {
                     subpageGameRecord_page--;
                     drawSubpageGameData();
@@ -60,8 +61,8 @@ int subpageGameRecord() {
                 }
                 break;
             }
-            case KEY_BOTTOM: {
-                int ret = getRecordPageCount(username, H_MAX - 5);
+            case KEY_BOTTOM: case KEY_RIGHT: {
+                int ret = getRecordPageCount(username, H_MAX - 6);
                 if (subpageGameRecord_page + 1 <= ret) {
                     subpageGameRecord_page++;
                     drawSubpageGameData();
@@ -77,10 +78,14 @@ int subpageGameRecord() {
     }
 }
 
-void drawSubpageGameData() {
+//游戏记录子界面的显示
+static void drawSubpageGameData() {
+    buildFrame();//因为换页,需要刷新
     int t = 0;
-    GameRecord* gr = getRecord(username, H_MAX-5, subpageGameRecord_page, &t);
-    setLineCenter(2, formatStr("%s的游戏记录",1,username));
+    GameRecord* gr = getRecord(username, H_MAX-6, subpageGameRecord_page, &t);
+    setLineLeftN_(1,"使用↑/↓切换上下页");
+    setLineRightN_(1, formatStr("总积分数:%d",1, getPoints(username)));
+    setLineCenter(2, formatStr("%s的游戏记录(%d/%d)",3,username,subpageGameRecord_page, getRecordPageCount(username,H_MAX-6)));
     setLineCenter(4, formatStr("%-11s %-5s %-5s %-20s",4,"游戏","得分","积分","时间"));
     for (int i = 0; i < t; i++) {
         setLineCenter(i+6, formatStr("%-11s %-5d %-5d %-20s",4, getGameNameById(gr[i].game),gr[i].score,gr[i].points,gr[i].time));
