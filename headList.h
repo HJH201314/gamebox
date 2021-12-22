@@ -15,6 +15,7 @@
 #define KEY_BACK 8//Backspace的键值
 #define KEY_ENTER 13//Enter的键值
 #define KEY_ESC 27//Esc的键值
+#define KEY_TAB 9//Tab的键值
 #define KEY_DIR_FLAG 224//224为控制符的前置标志
 #define KEY_TOP 72//上
 #define KEY_LEFT 75//左

@@ -50,7 +50,7 @@ void buildFlexFrame() {//构造可变的边框
     }
 }
 
-void gotoxy(short x, short y)//设置光标到x,y坐标
+void gotoxy(short x, short y)//设置光标到x(左到右),y坐标(上到下),与项目的xy轴不同
 {
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD pos;
@@ -59,6 +59,22 @@ void gotoxy(short x, short y)//设置光标到x,y坐标
     SetConsoleCursorPosition(handle, pos);
     //system("cls");
     //不使用清除控制台,可以避免页面闪烁
+}
+
+void warning() {//闪烁红色警告
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(handle,FOREGROUND_RED);
+    output();
+    Sleep(200);
+    SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY|FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED);
+}
+
+void success() {//闪烁绿色成功
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(handle,FOREGROUND_GREEN);
+    output();
+    Sleep(200);
+    SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY|FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED);
 }
 
 void randomDot(char ch) {

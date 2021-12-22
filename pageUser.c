@@ -4,6 +4,7 @@
 
 #include <conio.h>
 #include <windows.h>
+#include <stdio.h>
 
 #include "global.h"
 
@@ -110,34 +111,44 @@ static int subpageChangePwd() {
     output();
     int ch = 0;
     while(1) {
+        setTips("");
         SetConsoleTitleA("修改密码");
         switch (ch) {
             case KEY_ESC: return FLAG_EXIT;
+            case KEY_TAB: {
+                progress_changepwd = (progress_changepwd + 1) % 3;
+                drawSubpageChangePwd();
+                break;
+            }
             case KEY_BACK: {
                 int len = (int)strlen(pwd[progress_changepwd]);
                 if (len >= 1) {//如果至少有一位密码
                     pwd[progress_changepwd][len - 1] = '\0';//删除最后一位
                     drawSubpageChangePwd();
                 }
+                break;
             }
             case KEY_TOP: {
                 if (isInputingDir && progress_changepwd > 0) {
                     progress_changepwd--;
                     drawSubpageChangePwd();
                 }
-                isInputingDir = 0;
-                setTips(formatStr("%d",1,progress_changepwd));
+                break;
             }
             case KEY_BOTTOM: {
                 if (isInputingDir && progress_changepwd < 2) {
                     progress_changepwd++;
                     drawSubpageChangePwd();
                 }
-                isInputingDir = 0;
-                setTips(formatStr("%d",1,progress_changepwd));
+                break;
             }
             case KEY_ENTER: {
-                if (strlen(pwd[0]) && strlen(pwd[1]) && strlen(pwd[2])) {
+                if (progress_changepwd < 2) {//回车下移
+                    progress_changepwd++;
+                    drawSubpageChangePwd();
+                } else if (progress_changepwd >= 3) {//已经修改完毕
+                    return FLAG_EXIT;
+                } else if (strlen(pwd[0]) && strlen(pwd[1]) && strlen(pwd[2])) {
                     if (login(username,pwd[0]) == 1) {//验证旧密码成功
                         if (strcmp(pwd[1],pwd[2]) == 0) {//两次输入相同
                             if (changePwd(username,pwd[2]) == 1) {//修改密码成功
@@ -145,12 +156,21 @@ static int subpageChangePwd() {
                                 buildFrame();
                                 setLineCenter(H_MAX / 2 - 1,"修改密码成功!");
                                 setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
+                                success();
+                            } else {
+                                setTips("修改密码失败,数据库错误!");
+                                warning();
                             }
+                        } else {
+                            setTips("两次输入的密码不一致!");
+                            warning();
                         }
+                    } else {
+                        setTips("原密码错误!");
+                        warning();//发生错误闪烁警告
                     }
-                } else if (progress_changepwd >= 3) {
-                    return FLAG_EXIT;
                 }
+                break;
             }
             case KEY_DIR_FLAG: //方向键会触发两个字符,需要屏蔽
                 isInputingDir = 1;
@@ -172,12 +192,13 @@ static int subpageChangePwd() {
     }
 }
 
+#define ERRORTIP_
 //显示 - 修改密码子界面
 static void drawSubpageChangePwd() {
     setLineCenter(H_MAX / 2 - 3, "请输入您的旧密码:");
     setLineCenter(H_MAX / 2 - 2, formatStr("%s%s%s",3,(progress_changepwd==0?">":""),pwd[0],(progress_changepwd==0?"<":"")));
     setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
     setLineCenter(H_MAX / 2 - 0, formatStr("%s%s%s",3,(progress_changepwd==1?">":""),pwd[1],(progress_changepwd==1?"<":"")));
-    setLineCenter(H_MAX / 2 + 1, "请再次输入您的新密码:");
+    setLineCenter(H_MAX / 2 + 1, "请重复您的新密码:");
     setLineCenter(H_MAX / 2 + 2, formatStr("%s%s%s",3,(progress_changepwd==2?">":""),pwd[2],(progress_changepwd==2?"<":"")));
 }
