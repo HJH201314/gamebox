@@ -97,11 +97,14 @@ static void drawSubpageGameData() {
     free(gr);
 }
 
-static char pwd[129];//支持128位密码
-static char pwd_t[129];//临时保存密码
-static int progress_changepwd = 1;//1-验证旧密码;2-输入新密码;3-重复输入新密码
+static char pwd[3][129];
+static int progress_changepwd = 0;//0-验证旧密码;1-输入新密码;2-重复输入新密码
+static int isInputingDir = 0;//是否正在输入方向键,方向键由两个字符构成,需要屏蔽
 //主控 - 修改密码子界面
 static int subpageChangePwd() {
+    memset(pwd,'\0',129*3);
+    progress_changepwd = 0;
+    isInputingDir = 0;
     initPage();
     drawSubpageChangePwd();
     output();
@@ -111,55 +114,59 @@ static int subpageChangePwd() {
         switch (ch) {
             case KEY_ESC: return FLAG_EXIT;
             case KEY_BACK: {
-                int len = (int)strlen(pwd);
+                int len = (int)strlen(pwd[progress_changepwd]);
                 if (len >= 1) {//如果至少有一位密码
-                    pwd[len - 1] = '\0';//删除最后一位
+                    pwd[progress_changepwd][len - 1] = '\0';//删除最后一位
+                    drawSubpageChangePwd();
                 }
+            }
+            case KEY_TOP: {
+                if (isInputingDir && progress_changepwd > 0) {
+                    progress_changepwd--;
+                    drawSubpageChangePwd();
+                }
+                isInputingDir = 0;
+                setTips(formatStr("%d",1,progress_changepwd));
+            }
+            case KEY_BOTTOM: {
+                if (isInputingDir && progress_changepwd < 2) {
+                    progress_changepwd++;
+                    drawSubpageChangePwd();
+                }
+                isInputingDir = 0;
+                setTips(formatStr("%d",1,progress_changepwd));
             }
             case KEY_ENTER: {
-                if (strlen(pwd) > 0) {//输入了密码
-                    switch (progress_changepwd) {
-                        case 1: {//验证阶段
-                            if (login(username,pwd) == 1) {//验证成功
+                if (strlen(pwd[0]) && strlen(pwd[1]) && strlen(pwd[2])) {
+                    if (login(username,pwd[0]) == 1) {//验证旧密码成功
+                        if (strcmp(pwd[1],pwd[2]) == 0) {//两次输入相同
+                            if (changePwd(username,pwd[2]) == 1) {//修改密码成功
                                 progress_changepwd++;
-                                setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
+                                buildFrame();
+                                setLineCenter(H_MAX / 2 - 1,"修改密码成功!");
+                                setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
                             }
-                            break;
                         }
-                        case 2: {//输入新密码
-                            progress_changepwd++;
-                            memcpy(pwd_t,pwd,128);
-                            setLineCenter(H_MAX / 2 - 1, "请再次输入您的新密码:");
-                            break;
-                        }
-                        case 3: {
-                            if (strcmp(pwd,pwd_t) == 0) {//两次输入的密码相同
-                                progress_changepwd++;
-                                if (changePwd(username,pwd) == 1) {
-                                    buildFrame();
-                                    setLineCenter(H_MAX / 2, "密码修改成功!");
-                                } else {
-                                    setTips("修改密码失败,请检查数据库!");
-                                }
-                            }
-                            break;
-                        }
-                        default: return FLAG_EXIT;
                     }
-                    memset(pwd,'\0',128);
+                } else if (progress_changepwd >= 3) {
+                    return FLAG_EXIT;
                 }
             }
+            case KEY_DIR_FLAG: //方向键会触发两个字符,需要屏蔽
+                isInputingDir = 1;
+                break;
+            default: isInputingDir = 0;
         }
-        if (ch >= 32 && ch <= 126) {//正确的字符
-            if (strlen(pwd) <= 127) {//如果不超过127位,则添加字符
+        if (ch >= 32 && ch <= 126 && !isInputingDir) {//正确的字符且不是方向键输入
+            if (strlen(pwd[progress_changepwd]) <= 127) {//如果不超过127位,则添加字符
                 char p[2] = {};
                 p[0] = (char)ch;
-                strcat(pwd,p);
+                strcat(pwd[progress_changepwd],p);
+                drawSubpageChangePwd();
             } else {
                 setTips("密码最多只能输入128位哦~");
             }
         }
-        setLineCenter(H_MAX / 2 + 1, pwd);
         output();
         ch = _getch();
     }
@@ -167,5 +174,10 @@ static int subpageChangePwd() {
 
 //显示 - 修改密码子界面
 static void drawSubpageChangePwd() {
-    setLineCenter(H_MAX / 2 - 1, "请输入您的旧密码:");
+    setLineCenter(H_MAX / 2 - 3, "请输入您的旧密码:");
+    setLineCenter(H_MAX / 2 - 2, formatStr("%s%s%s",3,(progress_changepwd==0?">":""),pwd[0],(progress_changepwd==0?"<":"")));
+    setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
+    setLineCenter(H_MAX / 2 - 0, formatStr("%s%s%s",3,(progress_changepwd==1?">":""),pwd[1],(progress_changepwd==1?"<":"")));
+    setLineCenter(H_MAX / 2 + 1, "请再次输入您的新密码:");
+    setLineCenter(H_MAX / 2 + 2, formatStr("%s%s%s",3,(progress_changepwd==2?">":""),pwd[2],(progress_changepwd==2?"<":"")));
 }
