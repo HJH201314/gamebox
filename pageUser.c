@@ -197,6 +197,7 @@ static int subpageChangePwd() {
 
 //显示 - 修改密码子界面
 static void drawSubpageChangePwd() {
+    setLineCenter(H_MAX / 2 - 6, "修改密码");
     setLineCenter(H_MAX / 2 - 3, "请输入您的旧密码:");
     setLineCenter(H_MAX / 2 - 2, formatStr("%s%s%s", 3, (progress == 0 ? ">" : ""), userinfo[0], (progress == 0 ? "<" : "")));
     setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
@@ -253,16 +254,21 @@ static int subpageChangeAccount() {
                 } else if (progress >= 2) {//已经修改完毕
                     return FLAG_EXIT;
                 } else if (strlen(userinfo[0]) && strlen(userinfo[1])) {
-                    if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
-                        progress++;
-                        strcpy(username, userinfo[0]);
-                        buildFrame();
-                        setLineCenter(H_MAX / 2 - 1,formatStr("欢迎回来,%s!",1,username));
-                        setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
-                        success();
+                    if (isUserExist(username)) {
+                        if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
+                            progress++;
+                            strcpy(username, userinfo[0]);
+                            buildFrame();
+                            setLineCenter(H_MAX / 2 - 1,formatStr("欢迎回来,%s!",1,username));
+                            setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
+                            success();
+                        } else {
+                            setTips("密码错误!");
+                            warning();//发生错误闪烁警告
+                        }
                     } else {
-                        setTips("账号或密码错误!");
-                        warning();//发生错误闪烁警告
+                        setTips("账号不存在!");
+                        warning();
                     }
                 }
                 break;
@@ -273,6 +279,7 @@ static int subpageChangeAccount() {
             default: isInputingDir = 0;
         }
         if (ch >= 32 && ch <= 126 && !isInputingDir) {//正确的字符且不是方向键输入
+            //TODO: 目前使用左右键时仍然会输入字母
             if (strlen(userinfo[progress]) <= 127) {//如果不超过127位,则添加字符
                 char p[2] = {};
                 p[0] = (char)ch;
@@ -288,6 +295,7 @@ static int subpageChangeAccount() {
 }
 
 static void drawSubpageChangeAccount() {
+    setLineCenter(H_MAX / 2 - 4,"切换账号");
     setLineCenter(H_MAX / 2 - 1, formatStr("账号:%s%s", 2, (progress == 0 ? ">" : ""), userinfo[0]));
     setLineCenter(H_MAX / 2 + 1, formatStr("密码:%s%s", 2, (progress == 1 ? ">" : ""), userinfo[1]));
 }
