@@ -15,7 +15,7 @@
 
 extern char esctip[];
 
-char *username = "guest";
+char username[129] = "guest";
 sqlite3 *db;//数据库
 
 int main() {

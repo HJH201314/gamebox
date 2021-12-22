@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "global.h"
 
-extern char *username;
+extern char username[129];
 
 void pageMain(){
     int ch;

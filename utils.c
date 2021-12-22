@@ -72,8 +72,8 @@ void resetStrRight(char *str, char *ch) {//清空原有文字并居右在str中�
     }
 }
 
-char *formatStr(char *format, int count, ...) {//直接返回格式化后的文本,最长不超过128
-    static char result[128] = "";//提供128字节的缓冲区
+char *formatStr(char *format, int count, ...) {//直接返回格式化后的文本,最长不超过256
+    static char result[256] = "";//提供256字节的缓冲区
     va_list vaList;
     va_start(vaList, count);
     vsprintf(result, format, vaList);
@@ -81,11 +81,11 @@ char *formatStr(char *format, int count, ...) {//直接返回格式化后的文�
     return result;
 }
 
-char *connectStr(int count, ...) {//将count个字符串拼接起来,最长不超过128
+char *connectStr(int count, ...) {//将count个字符串拼接起来,最长不超过256
     int i;
     va_list vaList;
     va_start(vaList, count);
-    static char result[128] = "";//提供128字节的缓冲区
+    static char result[256] = "";//提供256字节的缓冲区
     for (i = 0; i < count; i++)
         strcat(result, va_arg(vaList, char*));
     va_end(vaList);

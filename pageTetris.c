@@ -68,7 +68,7 @@ static unsigned int blocklist[BLOCK_COUNT] = {
 static blocklink *blockhead;
 static blocklink lastblock = {1,1,0b1111111111111111};
 
-extern char *username;
+extern char username[129];
 
 //该页面主程序
 int pageTetris() {//返回0即返回mainPage

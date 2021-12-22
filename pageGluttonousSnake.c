@@ -43,7 +43,7 @@ static struct partofsnake snake[H_MAX*W_MAX];
 static struct applesample apples[APPLE_COUNT];
 static int snake_length = 0;
 
-extern char *username;
+extern char username[129];
 
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
