@@ -42,8 +42,8 @@ void initPage();//初始化页面,页面载入或重新载入时调用
 void buildFrame();//构建框架(墙壁+中空)
 void buildFlexFrame();//构造中间框
 void gotoxy(short x, short y);//定位输入到(x,y)
-void warning();//闪烁红色警告
-void success();//闪烁绿色成功
+void shineRed();//闪烁红色警告
+void shineGreen();//闪烁绿色成功
 void output();//输出cWin
 
 //bitUtils - 二进制位相关函数
