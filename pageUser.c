@@ -159,18 +159,18 @@ static int subpageChangePwd() {
                                 buildFrame();
                                 setLineCenter(H_MAX / 2 - 1,"修改密码成功!");
                                 setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
-                                success();
+                                shineGreen();
                             } else {
                                 setTips("修改密码失败,数据库错误!");
-                                warning();
+                                shineRed();
                             }
                         } else {
                             setTips("两次输入的密码不一致!");
-                            warning();
+                            shineRed();
                         }
                     } else {
                         setTips("原密码错误!");
-                        warning();//发生错误闪烁警告
+                        shineRed();//发生错误闪烁警告
                     }
                 }
                 break;
@@ -254,21 +254,21 @@ static int subpageChangeAccount() {
                 } else if (progress >= 2) {//已经修改完毕
                     return FLAG_EXIT;
                 } else if (strlen(userinfo[0]) && strlen(userinfo[1])) {
-                    if (isUserExist(username)) {
+                    if (isUserExist(userinfo[0])) {
                         if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
                             progress++;
                             strcpy(username, userinfo[0]);
                             buildFrame();
                             setLineCenter(H_MAX / 2 - 1,formatStr("欢迎回来,%s!",1,username));
                             setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
-                            success();
+                            shineGreen();
                         } else {
                             setTips("密码错误!");
-                            warning();//发生错误闪烁警告
+                            shineRed();//发生错误闪烁警告
                         }
                     } else {
                         setTips("账号不存在!");
-                        warning();
+                        shineRed();
                     }
                 }
                 break;
