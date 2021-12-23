@@ -44,7 +44,7 @@ int pageGuessNumber() {//返回0即返回mainPage,1就重开
         setLineCenter(midline - 2, "Please guess a number (and press Enter):");
         //setLineCenter(H_MAX/2-1, random_str);
         key_result = getKeyPress();
-        if(key_result != 0) return key_result;
+        if (key_result != 0) return key_result;
         setLineRight(1, formatStr("You have tried %d times(%d max)", 2, try_times, try_time_max));
         setLineCenter(midline, input_str);
 
@@ -54,14 +54,14 @@ int pageGuessNumber() {//返回0即返回mainPage,1就重开
     return FLAG_EXIT;
 }
 
-static int getKeyPress(){
+static int getKeyPress() {
     int ch;
     if (_kbhit()) {//是否有按下键盘
         ch = _getch();//
         switch (ch) {
             case KEY_ESC: {//按下Esc,退出page
                 if (correct_times != 0) {
-                    addRecord(username,GAMEID_GUESSNUMBER,correct_times,sumDown(correct_times)+correct_times);
+                    addRecord(username, GAMEID_GUESSNUMBER, correct_times, sumDown(correct_times) + correct_times);
                 }
                 return FLAG_EXIT;
             }
@@ -91,7 +91,7 @@ static int getKeyPress(){
                         setLineCenter(midline + 2, formatStr("%d is too small!", 1, input_num));
                         try_times++;
                     } else {
-                        addPoints(username,correct_times+1);
+                        addPoints(username, correct_times + 1);
                         setLineCenter(midline + 1, "You are correct!!!");
                         setLineCenter(midline + 2, formatStr("+ %d Points", 1, correct_times + 1));
                         setLineCenter(midline + 3, "Press Enter to continue...");

@@ -24,7 +24,7 @@ int isUserExist(char *username) {
     return (ret != 0);
 }
 
-//注册用户,返回1-成功,0-失败
+//注册用户,成功返回1,失败返回0,具体错误可传入error获取ERROR_常量
 int createUser(char *username, char *password, int *error) {
     if (!isUserExist(username)) {
         sqlite3_stmt *pStmt;
@@ -42,8 +42,13 @@ int createUser(char *username, char *password, int *error) {
     }
 }
 
+//删除用户,成功返回1,失败返回0,具体错误可传入error获取ERROR_常量
 int deleteUser(char *username, char *password, int *error) {
     if (isUserExist(username)) {
+        if (!login(username,password)) {
+            setError(error,ERROR_WRONGPWD);
+            return 0;
+        }
         sqlite3_stmt *pStmt;
         sqlite3_prepare_v2(db, "DELETE FROM user WHERE username=? AND password=?", -1, &pStmt, 0);
         if (pStmt == 0) {

@@ -12,7 +12,7 @@ static void drawPageUser();
 
 static int subpageGameRecord();
 
-static void drawSubpageGameData();
+static void drawSubpageGameData(int page);
 
 static int subpageChangePwd();
 
@@ -21,6 +21,10 @@ static void drawSubpageChangePwd();
 static int subpageChangeAccount();
 
 static void drawSubpageChangeAccount();
+
+static int subpageDeleteAccount();
+
+static void drawSubpageDeleteAccount();
 
 extern char username[129];
 
@@ -45,6 +49,13 @@ int pageUser() {
             case '3':
                 subpageChangeAccount();
                 break;
+            case '4':
+                if (strcmp(username, "guest") == 0) {
+                    setTipsAndShineRed("不能删除游客帐号!");
+                } else {
+                    subpageDeleteAccount();
+                }
+                break;
         }
         initPage();
         drawPageUser();
@@ -59,12 +70,11 @@ static void drawPageUser() {
     setLineCenter(H_MAX / 2 + 2, "(3)切换帐号 (4)删除账号");
 }
 
-static int subpageGameRecord_page = 1;
-
 //主控 - 游戏记录子界面
 static int subpageGameRecord() {
     initPage();
-    drawSubpageGameData();
+    int page = 1;
+    drawSubpageGameData(page);
     output();
     int ch = 0;
     while (1) {
@@ -74,9 +84,9 @@ static int subpageGameRecord() {
                 return FLAG_EXIT;
             case KEY_TOP:
             case KEY_LEFT: {
-                if (subpageGameRecord_page - 1 >= 1) {
-                    subpageGameRecord_page--;
-                    drawSubpageGameData();
+                if (page - 1 >= 1) {
+                    page--;
+                    drawSubpageGameData(page);
                 } else {
                     setTips("没有上一页了啦~");
                 }
@@ -85,9 +95,9 @@ static int subpageGameRecord() {
             case KEY_BOTTOM:
             case KEY_RIGHT: {
                 int ret = getRecordPageCount(username, H_MAX - 6);
-                if (subpageGameRecord_page + 1 <= ret) {
-                    subpageGameRecord_page++;
-                    drawSubpageGameData();
+                if (page + 1 <= ret) {
+                    page++;
+                    drawSubpageGameData(page);
                 } else {
                     setTips("没有下一页了啦~");
                 }
@@ -102,12 +112,12 @@ static int subpageGameRecord() {
 }
 
 //显示 - 游戏记录子界面
-static void drawSubpageGameData() {
+static void drawSubpageGameData(int page) {
     buildFrame();//因为换页,需要刷新
     int t = 0;
-    GameRecord *gr = getRecord(username, H_MAX - 6, subpageGameRecord_page, &t);
+    GameRecord *gr = getRecord(username, H_MAX - 6, page, &t);
     setLineRightN_(1, formatStr("总积分数:%d", 1, getPoints(username)));
-    setLineCenter(2, formatStr("%s的游戏记录(%d/%d)", 3, username, subpageGameRecord_page,
+    setLineCenter(2, formatStr("%s的游戏记录(%d/%d)", 3, username, page,
                                getRecordPageCount(username, H_MAX - 6)));
     setLineCenter(4, formatStr("%-11s %-5s %-5s %-20s", 4, "游戏", "得分", "积分", "时间"));
     for (int i = 0; i < t; i++) {
@@ -118,8 +128,8 @@ static void drawSubpageGameData() {
     free(gr);
 }
 
-static char userinfo[3][129];
-static int progress = 0;
+static char userinfo[3][129];//三个字段储存什么由页面决定
+static int progress = 0;//当前输入或选中的项目
 static int selector = 0;//当前选中的菜单
 static int isInputingDir = 0;//是否正在输入方向键,方向键由两个字符构成,需要屏蔽
 //主控 - 修改密码子界面
@@ -243,7 +253,7 @@ static void drawSubpageChangePwd() {
 static int pagetype = 0;//0-登录,1-注册
 static int subpageChangeAccount() {
     initPage();
-    memset(userinfo, '\0', 2 * 129);
+    memset(userinfo, '\0', 3 * 129);
     isInputingDir = 0;
     progress = 0;
     selector = 0;
@@ -351,6 +361,7 @@ static int subpageChangeAccount() {
                             progress = 2;//重复输入密码
                             drawSubpageChangeAccount();
                         } else {
+                            drawSubpageChangeAccount();//先更新一次页面,防止重复输入密码框没有显示
                             if (strcmp(userinfo[1], userinfo[2]) == 0) {
                                 if (!isUserExist(userinfo[0])) {//用户不存在则创建
                                     if (createUser(userinfo[0], userinfo[1], NULL)) {
@@ -403,4 +414,115 @@ static void drawSubpageChangeAccount() {
                             ((progress == 3 && selector == 0) ? "<" : ""),
                             ((progress == 3 && selector == 1) ? ">" : ""),
                             ((progress == 3 && selector == 1) ? "<" : "")));
+}
+
+//主控 - 删除账号子界面
+static int subpageDeleteAccount() {
+    initPage();
+    memset(userinfo, '\0', 129);
+    isInputingDir = 0;
+    progress = 0;
+    drawSubpageDeleteAccount();
+    output();
+    int ch = 0;
+    while (1) {
+        setTips("");
+        SetConsoleTitleA("删除账号");
+        switch (ch) {
+            case KEY_ESC:
+                return FLAG_EXIT;
+            case KEY_TAB: {
+                progress = (progress + 1) % 2;
+                drawSubpageDeleteAccount();
+                break;
+            }
+            case KEY_BACK: {
+                int len = (int) strlen(userinfo[progress]);
+                if (len >= 1) {//如果至少有一位
+                    userinfo[progress][len - 1] = '\0';//删除最后一位
+                    drawSubpageDeleteAccount();
+                }
+                break;
+            }
+            case KEY_TOP: {
+                if (isInputingDir) {
+                    if (progress > 0) {
+                        progress--;
+                        drawSubpageDeleteAccount();
+                    }
+                    isInputingDir = 0;
+                    goto output;
+                }
+                break;
+            }
+            case KEY_BOTTOM: {
+                if (isInputingDir) {
+                    if (progress < 1) {
+                        progress++;
+                        drawSubpageDeleteAccount();
+                    }
+                    isInputingDir = 0;
+                    goto output;
+                }
+                break;
+            }
+            case KEY_LEFT: case KEY_RIGHT: {
+                if (isInputingDir) {
+                    isInputingDir = 0;
+                    goto output;
+                }
+                break;
+            }
+            case KEY_ENTER: {
+                //progress:0-输入文字,2-确认
+                if (progress < 1) {//回车下移
+                    progress++;
+                    drawSubpageDeleteAccount();
+                } else if (progress >= 2) {//已经删除完毕
+                    return FLAG_EXIT;
+                } else {
+                    if (strlen(userinfo[0])) {
+                        if (deleteUser(username, userinfo[0], NULL) == 1) {//删除成功
+                            progress++;
+                            buildFrame();
+                            setLineCenter(H_MAX / 2 - 1, formatStr("删除帐号%s成功,已切换至guest帐号!", 1, username));
+                            strcpy(username, "guest");
+                            setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");
+                            shineGreen();
+                        } else setTipsAndShineRed("密码错误!");
+                    } else setTipsAndShineRed("啥也没输入呢!");
+                }
+                break;
+            }
+            case KEY_DIR_FLAG: //方向键会触发两个字符,需要屏蔽
+                isInputingDir = 1;
+                break;
+            default:
+                isInputingDir = 0;
+        }
+        if (!isInputingDir && ch >= 32 && ch <= 126) {//正确的字符输入,方向键已经通过标签跳过此段
+            if (strlen(userinfo[progress]) <= 127) {//如果不超过127位,则添加字符
+                char p[2] = {};
+                p[0] = (char) ch;
+                strcat(userinfo[progress], p);
+                drawSubpageDeleteAccount();
+            } else {
+                setTips("最多只能输入128位哦~");
+            }
+        }
+        output:
+        output();
+        ch = _getch();
+    }
+}
+
+//界面 - 切换帐号子界面
+static void drawSubpageDeleteAccount() {
+    buildFrame();
+    setLineCenter(H_MAX / 2 - 4, "删除账号");
+    setLineCenter(H_MAX / 2 - 1, formatStr("真的要删除帐号%s吗?", 1, username));
+    setLineCenter(H_MAX / 2 + 1, formatStr("若确认删除,请在下方输入密码并确认", 1, username));
+    setLineCenter(H_MAX / 2 + 2,
+                  formatStr("%s%s%s", 3, (progress == 0 ? ">" : ""), userinfo[0], (progress == 0 ? "<" : "")));
+    setLineCenter(H_MAX / 2 + 4, formatStr("%s确认%s", 2, (progress == 1 ? ">" : ""), (progress == 1 ? "<" : "")));
 }

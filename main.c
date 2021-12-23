@@ -40,7 +40,9 @@ int main() {
                      NULL, NULL, NULL);
     }
     //创建默认用户
-    createUser("guest","123456",NULL);
+    if(!isUserExist("guest")) {
+        createUser("guest","123456",NULL);
+    }
 
     //设置最后一行的Esc键提示
     memset(esctip,' ',WIDTH-1);
