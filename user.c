@@ -24,6 +24,7 @@ int isUserExist(char *username) {
     return (ret != 0);
 }
 
+//注册用户,返回1-成功,0-失败
 int createUser(char *username, char *password, int *error) {
     if (!isUserExist(username)) {
         sqlite3_stmt *pStmt;

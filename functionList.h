@@ -38,6 +38,7 @@ void setLineRight(int line,char * ch);//在第line行居右输出ch,其余填充
 void setLineRightN(int line, char *str, int rangeA, int rangeB);//在line行居右输出str,但其余不填充空格
 
 void setTips(char * str);//设置提示
+void setTipsAndShineRed(char *str);//设置提示并闪烁红色
 void initPage();//初始化页面,页面载入或重新载入时调用
 void buildFrame();//构建框架(墙壁+中空)
 void buildFlexFrame();//构造中间框

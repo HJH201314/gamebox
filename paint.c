@@ -183,6 +183,17 @@ void setTips(char *str) {
     output();
 }
 
+//设置tips并闪烁
+void setTipsAndShineRed(char *str) {
+    int len = (int) strlen(str);
+    memset(tips, ' ', WIDTH - 1);
+    if (len <= WIDTH - 1) {
+        setStrFrom(tips, 1, str);
+    }
+    shineRed();
+    output();
+}
+
 //初始化页面,包含清空tips和构造框架
 void initPage() {
     memset(tips, ' ', WIDTH - 1);

@@ -9,11 +9,17 @@
 #include "global.h"
 
 static void drawPageUser();
+
 static int subpageGameRecord();
+
 static void drawSubpageGameData();
+
 static int subpageChangePwd();
+
 static void drawSubpageChangePwd();
+
 static int subpageChangeAccount();
+
 static void drawSubpageChangeAccount();
 
 extern char username[129];
@@ -24,17 +30,21 @@ int pageUser() {
     drawPageUser();
     output();
     int ch = 0;
-    while(1) {
+    while (1) {
         SetConsoleTitleA("个人信息");
         ch = _getch();
         switch (ch) {
-            case KEY_ESC: return FLAG_EXIT;
+            case KEY_ESC:
+                return FLAG_EXIT;
             case '1':
-                subpageGameRecord();break;
+                subpageGameRecord();
+                break;
             case '2':
-                subpageChangePwd();break;
+                subpageChangePwd();
+                break;
             case '3':
-                subpageChangeAccount();break;
+                subpageChangeAccount();
+                break;
         }
         initPage();
         drawPageUser();
@@ -44,23 +54,26 @@ int pageUser() {
 
 //显示 - 用户中心主界面
 static void drawPageUser() {
-    setLineCenter(H_MAX / 2 - 2, formatStr("%s好,%s!",2,getTimePeriod(),username));
-    setLineCenter(H_MAX / 2,"(1)游戏数据 (2)修改密码");
-    setLineCenter(H_MAX / 2 + 2,"(3)切换帐号 (4)删除账号");
+    setLineCenter(H_MAX / 2 - 2, formatStr("%s好,%s!", 2, getTimePeriod(), username));
+    setLineCenter(H_MAX / 2, "(1)游戏数据 (2)修改密码");
+    setLineCenter(H_MAX / 2 + 2, "(3)切换帐号 (4)删除账号");
 }
 
 static int subpageGameRecord_page = 1;
+
 //主控 - 游戏记录子界面
 static int subpageGameRecord() {
     initPage();
     drawSubpageGameData();
     output();
     int ch = 0;
-    while(1) {
+    while (1) {
         SetConsoleTitleA("游戏记录");
         switch (ch) {
-            case KEY_ESC: return FLAG_EXIT;
-            case KEY_TOP: case KEY_LEFT: {
+            case KEY_ESC:
+                return FLAG_EXIT;
+            case KEY_TOP:
+            case KEY_LEFT: {
                 if (subpageGameRecord_page - 1 >= 1) {
                     subpageGameRecord_page--;
                     drawSubpageGameData();
@@ -69,7 +82,8 @@ static int subpageGameRecord() {
                 }
                 break;
             }
-            case KEY_BOTTOM: case KEY_RIGHT: {
+            case KEY_BOTTOM:
+            case KEY_RIGHT: {
                 int ret = getRecordPageCount(username, H_MAX - 6);
                 if (subpageGameRecord_page + 1 <= ret) {
                     subpageGameRecord_page++;
@@ -91,12 +105,15 @@ static int subpageGameRecord() {
 static void drawSubpageGameData() {
     buildFrame();//因为换页,需要刷新
     int t = 0;
-    GameRecord* gr = getRecord(username, H_MAX-6, subpageGameRecord_page, &t);
-    setLineRightN_(1, formatStr("总积分数:%d",1, getPoints(username)));
-    setLineCenter(2, formatStr("%s的游戏记录(%d/%d)",3,username,subpageGameRecord_page, getRecordPageCount(username,H_MAX-6)));
-    setLineCenter(4, formatStr("%-11s %-5s %-5s %-20s",4,"游戏","得分","积分","时间"));
+    GameRecord *gr = getRecord(username, H_MAX - 6, subpageGameRecord_page, &t);
+    setLineRightN_(1, formatStr("总积分数:%d", 1, getPoints(username)));
+    setLineCenter(2, formatStr("%s的游戏记录(%d/%d)", 3, username, subpageGameRecord_page,
+                               getRecordPageCount(username, H_MAX - 6)));
+    setLineCenter(4, formatStr("%-11s %-5s %-5s %-20s", 4, "游戏", "得分", "积分", "时间"));
     for (int i = 0; i < t; i++) {
-        setLineCenter(i+6, formatStr("%-11s %-5d %-5d %-20s",4, getGameNameById(gr[i].game),gr[i].score,gr[i].points,gr[i].time));
+        setLineCenter(i + 6,
+                      formatStr("%-11s %-5d %-5d %-20s", 4, getGameNameById(gr[i].game), gr[i].score, gr[i].points,
+                                gr[i].time));
     }
     free(gr);
 }
@@ -115,18 +132,19 @@ static int subpageChangePwd() {
     drawSubpageChangePwd();
     output();
     int ch = 0;
-    while(1) {
+    while (1) {
         setTips("");
         SetConsoleTitleA("修改密码");
         switch (ch) {
-            case KEY_ESC: return FLAG_EXIT;
+            case KEY_ESC:
+                return FLAG_EXIT;
             case KEY_TAB: {
                 progress = (progress + 1) % 3;
                 drawSubpageChangePwd();
                 break;
             }
             case KEY_BACK: {
-                int len = (int)strlen(userinfo[progress]);
+                int len = (int) strlen(userinfo[progress]);
                 if (len >= 1) {//如果至少有一位密码
                     userinfo[progress][len - 1] = '\0';//删除最后一位
                     drawSubpageChangePwd();
@@ -139,7 +157,9 @@ static int subpageChangePwd() {
                         progress--;
                         drawSubpageChangePwd();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
             case KEY_BOTTOM: {
@@ -148,10 +168,20 @@ static int subpageChangePwd() {
                         progress++;
                         drawSubpageChangePwd();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
+            case KEY_LEFT:
+            case KEY_RIGHT:
+                if (isInputingDir) {
+                    isInputingDir = 0;
+                    goto output;
+                }
+                break;
             case KEY_ENTER: {
+                //progress:0-输入帐号,1-输入密码,2-再次输入密码,3-选择登录或注册
                 if (progress < 3) {//回车下移
                     progress++;
                     drawSubpageChangePwd();
@@ -163,39 +193,32 @@ static int subpageChangePwd() {
                             if (changePwd(username, userinfo[2]) == 1) {//修改密码成功
                                 progress++;
                                 buildFrame();
-                                setLineCenter(H_MAX / 2 - 1,"修改密码成功!");
-                                setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
+                                setLineCenter(H_MAX / 2 - 1, "修改密码成功!");
+                                setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");
                                 shineGreen();
-                            } else {
-                                setTips("修改密码失败,数据库错误!");
-                                shineRed();
-                            }
-                        } else {
-                            setTips("两次输入的密码不一致!");
-                            shineRed();
-                        }
-                    } else {
-                        setTips("原密码错误!");
-                        shineRed();//发生错误闪烁警告
-                    }
+                            } else setTipsAndShineRed("修改密码失败,数据库错误!");
+                        } else setTipsAndShineRed("两次输入的密码不一致!");
+                    } else setTipsAndShineRed("原密码错误!");
                 }
                 break;
             }
             case KEY_DIR_FLAG: //方向键会触发两个字符,需要屏蔽
                 isInputingDir = 1;
                 break;
-            default: isInputingDir = 0;
+            default:
+                isInputingDir = 0;
         }
-        if (ch >= 32 && ch <= 126 && !isInputingDir) {//正确的字符且不是方向键输入
+        if (!isInputingDir && ch >= 32 && ch <= 126) {//正确的字符输入,方向键已经通过标签跳过此段
             if (strlen(userinfo[progress]) <= 127) {//如果不超过127位,则添加字符
                 char p[2] = {};
-                p[0] = (char)ch;
+                p[0] = (char) ch;
                 strcat(userinfo[progress], p);
                 drawSubpageChangePwd();
             } else {
                 setTips("密码最多只能输入128位哦~");
             }
         }
+        output:
         output();
         ch = _getch();
     }
@@ -205,36 +228,44 @@ static int subpageChangePwd() {
 static void drawSubpageChangePwd() {
     setLineCenter(H_MAX / 2 - 6, "修改密码");
     setLineCenter(H_MAX / 2 - 3, "请输入您的旧密码:");
-    setLineCenter(H_MAX / 2 - 2, formatStr("%s%s%s", 3, (progress == 0 ? ">" : ""), userinfo[0], (progress == 0 ? "<" : "")));
+    setLineCenter(H_MAX / 2 - 2,
+                  formatStr("%s%s%s", 3, (progress == 0 ? ">" : ""), userinfo[0], (progress == 0 ? "<" : "")));
     setLineCenter(H_MAX / 2 - 1, "请输入您的新密码:");
-    setLineCenter(H_MAX / 2 - 0, formatStr("%s%s%s", 3, (progress == 1 ? ">" : ""), userinfo[1], (progress == 1 ? "<" : "")));
+    setLineCenter(H_MAX / 2 - 0,
+                  formatStr("%s%s%s", 3, (progress == 1 ? ">" : ""), userinfo[1], (progress == 1 ? "<" : "")));
     setLineCenter(H_MAX / 2 + 1, "请重复您的新密码:");
-    setLineCenter(H_MAX / 2 + 2, formatStr("%s%s%s", 3, (progress == 2 ? ">" : ""), userinfo[2], (progress == 2 ? "<" : "")));
+    setLineCenter(H_MAX / 2 + 2,
+                  formatStr("%s%s%s", 3, (progress == 2 ? ">" : ""), userinfo[2], (progress == 2 ? "<" : "")));
     setLineCenter(H_MAX / 2 + 4, formatStr("%s确定%s", 2, ((progress == 3) ? ">" : ""), ((progress == 3) ? "<" : "")));
 }
 
 //主控 - 切换账号子界面
+static int pagetype = 0;//0-登录,1-注册
 static int subpageChangeAccount() {
     initPage();
     memset(userinfo, '\0', 2 * 129);
     isInputingDir = 0;
     progress = 0;
     selector = 0;
+    pagetype = 0;
     drawSubpageChangeAccount();
     output();
     int ch = 0;
-    while(1) {
+    while (1) {
         setTips("");
         SetConsoleTitleA("切换账号");
         switch (ch) {
-            case KEY_ESC: return FLAG_EXIT;
+            case KEY_ESC:
+                return FLAG_EXIT;
             case KEY_TAB: {
-                progress = (progress + 1) % 2;
+                progress = (progress + 1) % 4;
+                if (progress == 2 && pagetype == 0)
+                    progress++;//处于登录模式下跳过第三个输入
                 drawSubpageChangeAccount();
                 break;
             }
             case KEY_BACK: {
-                int len = (int)strlen(userinfo[progress]);
+                int len = (int) strlen(userinfo[progress]);
                 if (len >= 1) {//如果至少有一位
                     userinfo[progress][len - 1] = '\0';//删除最后一位
                     drawSubpageChangeAccount();
@@ -245,61 +276,94 @@ static int subpageChangeAccount() {
                 if (isInputingDir) {
                     if (progress > 0) {
                         progress--;
+                        if (progress == 2 && pagetype == 0)
+                            progress--;//处于登录模式下跳过第三个输入
                         drawSubpageChangeAccount();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
             case KEY_BOTTOM: {
                 if (isInputingDir) {
-                    if (progress < 2) {
+                    if (progress < 3) {
                         progress++;
+                        if (progress == 2 && pagetype == 0)
+                            progress++;//处于登录模式下跳过第三个输入
                         drawSubpageChangeAccount();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
             case KEY_LEFT: {
                 if (isInputingDir) {
-                    if (selector > 0 && progress == 2) {
+                    if (selector > 0 && progress == 3) {
                         selector--;
+                        pagetype = 0;//恢复为登录
                         drawSubpageChangeAccount();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
             case KEY_RIGHT: {
                 if (isInputingDir) {
-                    if (selector < 1 && progress == 2) {
+                    if (selector < 1 && progress == 3) {
                         selector++;
                         drawSubpageChangeAccount();
                     }
-                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
+                    isInputingDir = 0;
+                    goto output;
+                }
                 break;
             }
             case KEY_ENTER: {
                 //progress:0-输入帐号,1-输入密码,2-选择登录或注册
-                if (progress < 2) {//回车下移
+                if (progress < 3) {//回车下移
                     progress++;
+                    if (progress == 2 && pagetype == 0)
+                        progress++;//处于登录模式下跳过第三个输入
                     drawSubpageChangeAccount();
-                } else if (progress >= 3) {//已经修改完毕
+                } else if (progress >= 4) {//已经修改完毕
                     return FLAG_EXIT;
-                } else if (selector == 0 && strlen(userinfo[0]) && strlen(userinfo[1])) {//指向登录时
-                    if (isUserExist(userinfo[0])) {
-                        if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
-                            progress++;
-                            strcpy(username, userinfo[0]);
-                            buildFrame();
-                            setLineCenter(H_MAX / 2 - 1,formatStr("欢迎回来,%s!",1,username));
-                            setLineCenter(H_MAX / 2 + 1,"按下Enter或Esc返回");
-                            shineGreen();
+                } else {//选择登录/注册
+                    if (selector == 0) {//指向登录时
+                        pagetype = 0;
+                        if (strlen(userinfo[0]) && strlen(userinfo[1])) {
+                            if (isUserExist(userinfo[0])) {
+                                if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
+                                    progress++;
+                                    strcpy(username, userinfo[0]);
+                                    buildFrame();
+                                    setLineCenter(H_MAX / 2 - 1, formatStr("欢迎回来,%s!", 1, username));
+                                    setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");
+                                    shineGreen();
+                                } else setTipsAndShineRed("密码错误!");
+                            } else setTipsAndShineRed("账号不存在!");
+                        } else setTipsAndShineRed("账号或密码不能为空!");
+                    } else if (selector == 1) {//指向注册时
+                        pagetype = 1;//注册
+                        if (userinfo[2][0] == '\0') {
+                            progress = 2;//重复输入密码
+                            drawSubpageChangeAccount();
                         } else {
-                            setTips("密码错误!");
-                            shineRed();//发生错误闪烁警告
+                            if (strcmp(userinfo[1], userinfo[2]) == 0) {
+                                if (!isUserExist(userinfo[0])) {//用户不存在则创建
+                                    if (createUser(userinfo[0], userinfo[1], NULL)) {
+                                        progress++;
+                                        strcpy(username, userinfo[0]);
+                                        buildFrame();
+                                        setLineCenter(H_MAX / 2 - 1, formatStr("欢迎加入GameBox,%s!", 1, username));
+                                        setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");
+                                        shineGreen();
+                                    } else setTipsAndShineRed("因特殊原因注册失败!");//失败原因可通过createUser的error返回ERROR_常量,懒了
+                                } else setTipsAndShineRed("帐号已存在!");
+                            } else setTipsAndShineRed("两次输入的密码不一致!");
                         }
-                    } else {
-                        setTips("账号不存在!");
-                        shineRed();
                     }
                 }
                 break;
@@ -307,19 +371,20 @@ static int subpageChangeAccount() {
             case KEY_DIR_FLAG: //方向键会触发两个字符,需要屏蔽
                 isInputingDir = 1;
                 break;
-            default: isInputingDir = 0;
+            default:
+                isInputingDir = 0;
         }
-        if (ch >= 32 && ch <= 126 && !isInputingDir) {//正确的字符且不是方向键输入
-            //TODO: 目前使用左右键时仍然会输入字母
+        if (!isInputingDir && ch >= 32 && ch <= 126) {//正确的字符输入,方向键已经通过标签跳过此段
             if (strlen(userinfo[progress]) <= 127) {//如果不超过127位,则添加字符
                 char p[2] = {};
-                p[0] = (char)ch;
+                p[0] = (char) ch;
                 strcat(userinfo[progress], p);
                 drawSubpageChangeAccount();
             } else {
                 setTips("最多只能输入128位哦~");
             }
         }
+        output:
         output();
         ch = _getch();
     }
@@ -327,8 +392,15 @@ static int subpageChangeAccount() {
 
 //界面 - 切换帐号子界面
 static void drawSubpageChangeAccount() {
-    setLineCenter(H_MAX / 2 - 4,"切换账号");
+    buildFrame();
+    setLineCenter(H_MAX / 2 - 4, "切换账号");
     setLineCenter(H_MAX / 2 - 1, formatStr("账号:%s%s", 2, (progress == 0 ? ">" : ""), userinfo[0]));
     setLineCenter(H_MAX / 2 + 1, formatStr("密码:%s%s", 2, (progress == 1 ? ">" : ""), userinfo[1]));
-    setLineCenter(H_MAX / 2 + 3, formatStr("%s登录%s %s注册%s", 4, ((progress == 2 && selector == 0) ? ">" : ""), ((progress == 2 && selector == 0) ? "<" : ""), ((progress == 2 && selector == 1) ? ">" : ""), ((progress == 2 && selector == 1) ? "<" : "")));
+    if (pagetype)
+        setLineCenter(H_MAX / 2 + 3, formatStr("重复密码:%s%s", 2, (progress == 2 ? ">" : ""), userinfo[2]));
+    setLineCenter(H_MAX / 2 + 3 + pagetype * 2,
+                  formatStr("%s登录%s %s注册%s", 4, ((progress == 3 && selector == 0) ? ">" : ""),
+                            ((progress == 3 && selector == 0) ? "<" : ""),
+                            ((progress == 3 && selector == 1) ? ">" : ""),
+                            ((progress == 3 && selector == 1) ? "<" : "")));
 }
