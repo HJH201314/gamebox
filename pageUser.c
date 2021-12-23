@@ -207,6 +207,7 @@ static void drawSubpageChangePwd() {
 }
 
 //主控 - 切换账号子界面
+static int selector = 0;
 static int subpageChangeAccount() {
     initPage();
     memset(userinfo, '\0', 2 * 129);
@@ -247,13 +248,28 @@ static int subpageChangeAccount() {
                 }
                 break;
             }
+            case KEY_LEFT: {
+                if (isInputingDir && selector > 0 && progress == 2) {
+                    selector--;
+                    drawSubpageChangeAccount();
+                }
+                break;
+            }
+            case KEY_RIGHT: {
+                if (isInputingDir && selector < 1 && progress == 2) {
+                    selector++;
+                    drawSubpageChangeAccount();
+                }
+                break;
+            }
             case KEY_ENTER: {
-                if (progress < 1) {//回车下移
+                //progress:0-输入帐号,1-输入密码,2-选择登录或注册
+                if (progress < 2) {//回车下移
                     progress++;
                     drawSubpageChangeAccount();
-                } else if (progress >= 2) {//已经修改完毕
+                } else if (progress >= 3) {//已经修改完毕
                     return FLAG_EXIT;
-                } else if (strlen(userinfo[0]) && strlen(userinfo[1])) {
+                } else if (selector == 0 && strlen(userinfo[0]) && strlen(userinfo[1])) {//指向登录时
                     if (isUserExist(userinfo[0])) {
                         if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
                             progress++;
@@ -294,8 +310,10 @@ static int subpageChangeAccount() {
     }
 }
 
+//界面 - 切换帐号子界面
 static void drawSubpageChangeAccount() {
     setLineCenter(H_MAX / 2 - 4,"切换账号");
     setLineCenter(H_MAX / 2 - 1, formatStr("账号:%s%s", 2, (progress == 0 ? ">" : ""), userinfo[0]));
     setLineCenter(H_MAX / 2 + 1, formatStr("密码:%s%s", 2, (progress == 1 ? ">" : ""), userinfo[1]));
+    setLineCenter(H_MAX / 2 + 3, formatStr("%s登录%s %s注册%s", 4, ((progress == 2 && selector == 0) ? ">" : ""), ((progress == 2 && selector == 0) ? "<" : ""), ((progress == 2 && selector == 1) ? ">" : ""), ((progress == 2 && selector == 1) ? "<" : "")));
 }
