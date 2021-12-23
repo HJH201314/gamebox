@@ -10,7 +10,7 @@
 #include "global.h"
 
 #define BLOCK_SYMBOL 'o'//用于构成block的符号
-#define BLOCK_COUNT 8//预定义的block种类数量
+#define BLOCK_COUNT 9//预定义的block种类数量
 #define BLOCK_TOTAL_COUNT 6//包括当前block和未来blocks在内的所有blocks
 
 extern int width_flex;
@@ -63,7 +63,8 @@ static unsigned int blocklist[BLOCK_COUNT] = {
         0b1000110010000000,//├
         0b0100110001000000,//┤
         0b1100100010000000,//┌
-        0b1100000000000000//test
+        0b1100010001000000,//┐
+        0b1100000000000000//oo
 };//列表
 static blocklink *blockhead;
 static blocklink lastblock = {1,1,0b1111111111111111};
