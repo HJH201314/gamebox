@@ -102,12 +102,14 @@ static void drawSubpageGameData() {
 }
 
 static char userinfo[3][129];
-static int progress = 0;//0-验证旧密码;1-输入新密码;2-重复输入新密码
+static int progress = 0;
+static int selector = 0;//当前选中的菜单
 static int isInputingDir = 0;//是否正在输入方向键,方向键由两个字符构成,需要屏蔽
 //主控 - 修改密码子界面
 static int subpageChangePwd() {
     memset(userinfo, '\0', 129 * 3);
-    progress = 0;
+    progress = 0;//0-验证旧密码;1-输入新密码;2-重复输入新密码;3-确定
+    selector = 0;
     isInputingDir = 0;
     initPage();
     drawSubpageChangePwd();
@@ -132,26 +134,30 @@ static int subpageChangePwd() {
                 break;
             }
             case KEY_TOP: {
-                if (isInputingDir && progress > 0) {
-                    progress--;
-                    drawSubpageChangePwd();
-                }
+                if (isInputingDir) {
+                    if (progress > 0) {
+                        progress--;
+                        drawSubpageChangePwd();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_BOTTOM: {
-                if (isInputingDir && progress < 2) {
-                    progress++;
-                    drawSubpageChangePwd();
-                }
+                if (isInputingDir) {
+                    if (progress < 3) {
+                        progress++;
+                        drawSubpageChangePwd();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_ENTER: {
-                if (progress < 2) {//回车下移
+                if (progress < 3) {//回车下移
                     progress++;
                     drawSubpageChangePwd();
-                } else if (progress >= 3) {//已经修改完毕
+                } else if (progress >= 4) {//已经修改完毕
                     return FLAG_EXIT;
-                } else if (strlen(userinfo[0]) && strlen(userinfo[1]) && strlen(userinfo[2])) {
+                } else if (progress == 3 && strlen(userinfo[0]) && strlen(userinfo[1]) && strlen(userinfo[2])) {
                     if (login(username, userinfo[0]) == 1) {//验证旧密码成功
                         if (strcmp(userinfo[1], userinfo[2]) == 0) {//两次输入相同
                             if (changePwd(username, userinfo[2]) == 1) {//修改密码成功
@@ -204,15 +210,16 @@ static void drawSubpageChangePwd() {
     setLineCenter(H_MAX / 2 - 0, formatStr("%s%s%s", 3, (progress == 1 ? ">" : ""), userinfo[1], (progress == 1 ? "<" : "")));
     setLineCenter(H_MAX / 2 + 1, "请重复您的新密码:");
     setLineCenter(H_MAX / 2 + 2, formatStr("%s%s%s", 3, (progress == 2 ? ">" : ""), userinfo[2], (progress == 2 ? "<" : "")));
+    setLineCenter(H_MAX / 2 + 4, formatStr("%s确定%s", 2, ((progress == 3) ? ">" : ""), ((progress == 3) ? "<" : "")));
 }
 
 //主控 - 切换账号子界面
-static int selector = 0;
 static int subpageChangeAccount() {
     initPage();
     memset(userinfo, '\0', 2 * 129);
     isInputingDir = 0;
     progress = 0;
+    selector = 0;
     drawSubpageChangeAccount();
     output();
     int ch = 0;
@@ -235,31 +242,39 @@ static int subpageChangeAccount() {
                 break;
             }
             case KEY_TOP: {
-                if (isInputingDir && progress > 0) {
-                    progress--;
-                    drawSubpageChangeAccount();
-                }
+                if (isInputingDir) {
+                    if (progress > 0) {
+                        progress--;
+                        drawSubpageChangeAccount();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_BOTTOM: {
-                if (isInputingDir && progress < 2) {
-                    progress++;
-                    drawSubpageChangeAccount();
-                }
+                if (isInputingDir) {
+                    if (progress < 2) {
+                        progress++;
+                        drawSubpageChangeAccount();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_LEFT: {
-                if (isInputingDir && selector > 0 && progress == 2) {
-                    selector--;
-                    drawSubpageChangeAccount();
-                }
+                if (isInputingDir) {
+                    if (selector > 0 && progress == 2) {
+                        selector--;
+                        drawSubpageChangeAccount();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_RIGHT: {
-                if (isInputingDir && selector < 1 && progress == 2) {
-                    selector++;
-                    drawSubpageChangeAccount();
-                }
+                if (isInputingDir) {
+                    if (selector < 1 && progress == 2) {
+                        selector++;
+                        drawSubpageChangeAccount();
+                    }
+                } else isInputingDir = 0;//如果不是方向输入就要恢复为0以便字母输入
                 break;
             }
             case KEY_ENTER: {
