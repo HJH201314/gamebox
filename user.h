@@ -7,7 +7,7 @@
 
 int isUserExist(char *username);
 
-int createUser(char *username, char *password, int *error);
+int createUser(char *item, char *value, int *error);
 
 int deleteUser(char *username, char *password, int *error);
 

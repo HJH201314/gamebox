@@ -44,6 +44,7 @@ static struct applesample apples[APPLE_COUNT];
 static int snake_length = 0;
 
 extern char username[129];
+extern int freq;
 
 //该页面主程序
 int pageGluttonousSnake() {//返回0即返回mainPage
@@ -78,7 +79,7 @@ int pageGluttonousSnake() {//返回0即返回mainPage
         }
         output();
         timetick++;
-        Sleep(FREQ);
+        Sleep(freq);
     }
 }
 

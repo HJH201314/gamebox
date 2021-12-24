@@ -6,7 +6,7 @@
 #ifndef BIGPROJECT_HEADLIST_H
 #define BIGPROJECT_HEADLIST_H
 
-#define FREQ 10//窗口刷新率
+#define FREQ_DEFAULT 10//默认窗口刷新率
 #define HEIGHT 28//数组的一维长度(默认28)
 #define H_MAX (HEIGHT-2)//最大行是h-2(1~H_MAX)
 #define WIDTH 100//数组的二维长度(默认100)

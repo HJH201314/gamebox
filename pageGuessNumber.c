@@ -23,6 +23,7 @@ static char random_str[20];//随机数转成的字符串
 static int getKeyPress();//执行获取键盘操作
 
 extern char username[129];
+extern int freq;
 
 static void initGame() {//初始化游戏
     input_num = 0;//输入"数字"转成的长整数
@@ -49,7 +50,7 @@ int pageGuessNumber() {//返回0即返回mainPage,1就重开
         setLineCenter(midline, input_str);
 
         output();
-        Sleep(FREQ);
+        Sleep(freq);
     }
     return FLAG_EXIT;
 }

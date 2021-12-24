@@ -18,6 +18,7 @@ char cWin[HEIGHT][WIDTH] = {};
 char tips[WIDTH] = {};
 int width_flex = W_MAX;
 int height_flex = H_MAX;
+int freq = FREQ_DEFAULT;
 
 void buildFrame() {//构造边框
     for (int i = 0; i < HEIGHT; i++) {//左右两侧的壁

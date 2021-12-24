@@ -16,6 +16,7 @@
 extern int width_flex;
 extern int height_flex;
 extern char cWin[HEIGHT][WIDTH];
+extern int freq;
 
 //表示一个堆的信息
 struct block {
@@ -118,7 +119,7 @@ int pageTetris() {//返回0即返回mainPage
         }
         output();
         timetick++;
-        Sleep(FREQ);
+        Sleep(freq);
     }
 }
 

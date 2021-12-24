@@ -8,6 +8,7 @@
 
 #include "user.h"
 #include "point.h"
+#include "setting.h"
 #include "sqlUtils.h"
 
 //stringUtils - 字符串相关函数
@@ -55,6 +56,9 @@ unsigned int resetBit(unsigned int n, int k);//设置无符号整数n的低第k�
 //timeUtils - 时间相关函数
 char* getNowTime();//返回YYYY-DD-MM HH:mm:ss
 char *getTimePeriod();//获取当前时间段(凌晨、上午、中午、下午、晚上)
+
+//fileUtils - 文件相关函数
+#include "fileUtils.h"
 
 void setError(int *error, int msg);
 

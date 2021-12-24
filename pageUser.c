@@ -348,6 +348,7 @@ static int subpageChangeAccount() {
                                 if (login(userinfo[0], userinfo[1]) == 1) {//登录成功
                                     progress++;
                                     strcpy(username, userinfo[0]);
+                                    writeFileOneLine("CurrentUser",username);
                                     buildFrame();
                                     setLineCenter(H_MAX / 2 - 1, formatStr("欢迎回来,%s!", 1, username));
                                     setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");
@@ -367,6 +368,7 @@ static int subpageChangeAccount() {
                                     if (createUser(userinfo[0], userinfo[1], NULL)) {
                                         progress++;
                                         strcpy(username, userinfo[0]);
+                                        writeFileOneLine("CurrentUser",username);
                                         buildFrame();
                                         setLineCenter(H_MAX / 2 - 1, formatStr("欢迎加入GameBox,%s!", 1, username));
                                         setLineCenter(H_MAX / 2 + 1, "按下Enter或Esc返回");

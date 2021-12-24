@@ -8,11 +8,11 @@
 #include "global.h"
 
 extern char username[129];
+extern int freq;
 
 void pageMain(){
-    int ch;
+    int ch = 0;
     while(1){
-        SetConsoleTitleA("小游戏合集");
         //示例：获取按下的键
         //if(_kbhit()) {//是否有按下键盘 !!!有BUG,如果输入中文标点会导致卡死
 //            ch = _getch();//
@@ -54,6 +54,7 @@ void pageMain(){
             }
         }
         //}
+        SetConsoleTitleA("小游戏合集");
         buildFrame();
         setLineLeftN_(1, formatStr("Hello,%s!",1,username));
         setLineRightN_(1, formatStr("You have collected %d points", 1, getPoints(username)));
@@ -70,7 +71,7 @@ void pageMain(){
         output();
         ch = _getch();//
         setTips(formatStr("d:%d c:%c",2,(int)ch,ch));
-        Sleep(FREQ);
+        Sleep(freq);
     }
     back:
     return;
