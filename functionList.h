@@ -9,6 +9,7 @@
 #include "user.h"
 #include "point.h"
 #include "setting.h"
+#include "backpack.h"
 #include "sqlUtils.h"
 
 //stringUtils - 字符串相关函数
@@ -40,6 +41,7 @@ void setLineRightN(int line, char *str, int rangeA, int rangeB);//在line行居�
 
 void setTips(char * str);//设置提示
 void setTipsAndShineRed(char *str);//设置提示并闪烁红色
+void setTipsAndShineGreen(char *str);//设置提示并闪烁绿色
 void initPage();//初始化页面,页面载入或重新载入时调用
 void buildFrame();//构建框架(墙壁+中空)
 void buildFlexFrame();//构造中间框

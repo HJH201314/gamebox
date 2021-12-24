@@ -19,5 +19,6 @@ int pageGluttonousSnake();
 int pageTetris();
 
 int pageUser();
+int pageShop();
 
 #endif //BIGPROJECT_PAGELIST_H

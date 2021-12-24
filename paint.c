@@ -184,7 +184,7 @@ void setTips(char *str) {
     output();
 }
 
-//设置tips并闪烁
+//设置tips并闪烁红色
 void setTipsAndShineRed(char *str) {
     int len = (int) strlen(str);
     memset(tips, ' ', WIDTH - 1);
@@ -192,6 +192,16 @@ void setTipsAndShineRed(char *str) {
         setStrFrom(tips, 1, str);
     }
     shineRed();
+    output();
+}
+//设置tips并闪烁绿色
+void setTipsAndShineGreen(char *str) {
+    int len = (int) strlen(str);
+    memset(tips, ' ', WIDTH - 1);
+    if (len <= WIDTH - 1) {
+        setStrFrom(tips, 1, str);
+    }
+    shineGreen();
     output();
 }
 

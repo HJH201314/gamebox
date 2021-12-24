@@ -24,7 +24,7 @@ void pageMain(){
             switch(ch){
                 case '1': {
                     int result = FLAG_RESTART;
-                    while (result == FLAG_RESTART) {
+                    while (result == FLAG_RESTART) {//如果获得了重启的返回值,那么重新打开页面,也适用于首次打开
                         result = pageGuessNumber();
                     }
                     initPage();
@@ -51,6 +51,11 @@ void pageMain(){
                     initPage();
                     break;
                 }
+                case 's': {
+                    pageShop();
+                    initPage();
+                    break;
+                }
             }
         }
         //}
@@ -67,7 +72,7 @@ void pageMain(){
         setLineCenter(12,"(3)Tetris");
         setLineCenter(13,"(3)俄罗斯方块");
         setLineLeftN_(H_MAX,"(u)进入用户中心");
-        setLineRightN_(H_MAX,"(i)进入游戏设置");
+        setLineRightN_(H_MAX,"(i)进入游戏商店");
         output();
         ch = _getch();//
         setTips(formatStr("d:%d c:%c",2,(int)ch,ch));

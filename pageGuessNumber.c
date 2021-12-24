@@ -19,6 +19,7 @@ static int correct_times = 0;
 static char is_correct = 0;
 static long random_num = 0;
 static char random_str[20];//随机数转成的字符串
+static int isLifeUsed = 0;//是否已经使用过一线生机
 
 static int getKeyPress();//执行获取键盘操作
 
@@ -26,6 +27,7 @@ extern char username[129];
 extern int freq;
 
 static void initGame() {//初始化游戏
+    isLifeUsed = 0;
     input_num = 0;//输入"数字"转成的长整数
     try_times = 0;
     try_time_max = TRYTIME_BASE_MAX;
@@ -98,8 +100,15 @@ static int getKeyPress() {
                         setLineCenter(midline + 3, "Press Enter to continue...");
                         is_correct = 1;
                     }
-                    //错误达到上限9
+                    //错误达到上限
                     if (try_times >= try_time_max) {
+                        if (!isLifeUsed && getBpItemCount(username,"life") > 0) {
+                            useBpItem(username,"life");
+                            try_times -= 5;
+                            setTipsAndShineRed("消耗1个 一线生机 获得五次额外机会!");
+                            isLifeUsed = 1;
+                            break;
+                        }
                         setLineCenter(midline + 1, "YOU FAILED!");
                         setLineCenter(midline + 2,
                                       formatStr("(Automatically restart after %ds)", 1, 1));
