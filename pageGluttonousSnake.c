@@ -37,6 +37,7 @@ static int timetick = 0;
 static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
+static int is_life_used = 0;//是否已经使用一线生机
 static int dir = 0;//方向
 static int is_turned = 0;//在方向改变后变为1,走蛇后变回0,用于防止快速按动导致的装上脖子
 static struct partofsnake snake[H_MAX*W_MAX];
@@ -94,6 +95,7 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     is_started = 0;
     is_failed = 0;
     is_turned = 0;
+    is_life_used = 0;
     //还原apple
     for(int i = 0; i < APPLE_COUNT; i++) {
         apples[i].x = apples[i].y = -1;
@@ -173,8 +175,16 @@ static int goSnake() {//返回0为正常,1为碰壁
         }
         snake[i].lastdir = tempdir;
         //如果移动后要出界了就结束
-        if(snake[i].x < 1 || snake[i].x > H_MAX || snake[i].y < 1 || snake[i].y > W_MAX)
+        if(snake[i].x < 1 || snake[i].x > H_MAX || snake[i].y < 1 || snake[i].y > W_MAX) {
+//            if (!is_life_used && getBpItemCount(username,"life") > 0) {
+//                dir = !(dir % 2) + (rand() % 2) * 2;
+//                useBpItem(username,"life");
+//                setTipsAndShineRed("消耗1个 一线生机 消除底部10行!");
+//                is_life_used = 1;
+//                return 0;
+//            }
             return 1;
+        }
     }
     //如果蛇长不为1并且撞到了自己就结束
     if(snake_length != 1 && getPoint(snake[0].x,snake[0].y) == SYMBOL_SNAKE_BODY) {//上一刻

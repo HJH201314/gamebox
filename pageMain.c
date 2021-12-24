@@ -72,7 +72,7 @@ void pageMain(){
         setLineCenter(12,"(3)Tetris");
         setLineCenter(13,"(3)俄罗斯方块");
         setLineLeftN_(H_MAX,"(u)进入用户中心");
-        setLineRightN_(H_MAX,"(i)进入游戏商店");
+        setLineRightN_(H_MAX,"(s)进入游戏商店");
         output();
         ch = _getch();//
         setTips(formatStr("d:%d c:%c",2,(int)ch,ch));

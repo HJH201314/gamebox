@@ -43,7 +43,7 @@ static void drawNowBlock(blocklink *p);
 static void drawPreBlocks(blocklink *p);
 static int goBlock();
 static void rotateBlock();
-static void eliminateLine();
+static void eliminateLine(int addscore);
 static int isMovableDown();
 static int isMovableLeft();
 static int isMovableRight();
@@ -55,6 +55,7 @@ static int timetick = 0;
 static int midline = H_MAX / 2;//中间行
 static int is_started = 0;//是否已开始游戏
 static int is_failed = 0;//是否已经输了
+static int is_life_used = 0;//是否已经使用一线生机
 static int score = 0;
 static unsigned int blocklist[BLOCK_COUNT] = {
         0b1100110000000000,//田
@@ -98,12 +99,22 @@ int pageTetris() {//返回0即返回mainPage
         if (is_started && (timetick % 20 == 0 || key_result == KEY_BOTTOM)) {//后面一半是控制方块的速度
             setTips(formatStr("Score:%d Timetick:%d", 2, score, timetick));//先输出提示再走,否则有问题
             if (goBlock() == 0) {//goblock返回0表示该块到底了
-                eliminateLine();
+                eliminateLine(1);
                 //在节点BLOCK_TOTAL_COUNT插入新的块
                 blockhead = insertBlock(blockhead,BLOCK_TOTAL_COUNT+1,0,width_flex/2,blocklist[rand() % BLOCK_COUNT]);
                 //删除首个块
                 blockhead = delBlock(blockhead,1);
                 if (isMovableDown() == 0) {//新产生的也动不了了
+                    if (!is_life_used && getBpItemCount(username,"life") > 0) {
+                        for (int i = height_flex; i > height_flex - 10; i--) {
+                            memset(cWin[i]+1,BLOCK_SYMBOL,width_flex);
+                        }
+                        eliminateLine(0);
+                        useBpItem(username,"life");
+                        setTipsAndShineRed("消耗1个 一线生机 消除底部10行!");
+                        is_life_used = 1;
+                        goto output;
+                    }
                     is_started = 0;
                     is_failed = 1;
                     setLineLeft(height_flex+3," Gameover!");
@@ -117,6 +128,7 @@ int pageTetris() {//返回0即返回mainPage
                 drawNowBlock(blockhead);
             }
         }
+        output:
         output();
         timetick++;
         Sleep(freq);
@@ -261,7 +273,7 @@ static int isMovableDown() {
 }
 
 //消除整行
-static void eliminateLine() {
+static void eliminateLine(int addscore) {
     int i, j, flag;
     do {
         for (i = height_flex; i >= 1; i--) {
@@ -273,7 +285,7 @@ static void eliminateLine() {
             if (flag) break;
         }
         if (flag) {//如果整行都是
-            score += width_flex;
+            if (addscore) score += width_flex;
             for (i = flag; i > 1; i--) {//将上面的往下压
                 memmove(cWin[i] + 1, cWin[i - 1] + 1, width_flex);
             }
@@ -365,6 +377,7 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     //还原状态
     is_started = 0;
     is_failed = 0;
+    is_life_used = 0;
     //初始化中间分隔
     //width_flex = W_MAX / 3;
     width_flex = 12;

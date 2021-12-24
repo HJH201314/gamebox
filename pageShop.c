@@ -9,8 +9,8 @@
 #include "global.h"
 
 typedef struct {
-    char name[32];//最多63位的商品名
-    char name_show[32];//用于展示的名称
+    char name[16];//商品名(英文)
+    char name_show[16];//用于展示的名称
     int price;//商品价格
     int count;//一次购买的份数
 } ShopItem;
@@ -75,7 +75,7 @@ static void initShop() {
     addItem("life","一线生机", 199, 1);
     addItem("life","一线生机 * 5", 899, 5);
     setLineCenter(2, "商店");
-    setLineCenter(4, formatStr(" %-32s %-5s %-5s", 3, "物品", "价格", "数量"));
+    setLineCenter(4, formatStr(" %-16s %-5s %-5s %11s", 3, "物品", "价格", "数量",""));
     loadItems();
 }
 
@@ -83,8 +83,8 @@ static void loadItems() {//加载商品
     setLineRight(1, formatStr("Points:%d",1, getPoints(username)));
     for (int i = 0; i < itemcount; i++) {
         setLineCenter(5 + i,
-                      formatStr("%1s%-32s %-5d %-5d", 4, (selector == i ? ">" : ""), itemlist[i].name_show, itemlist[i].price,
-                                itemlist[i].count));
+                      formatStr("%1s%-16s %-5d %-5d 已拥有:%-4d", 4, (selector == i ? ">" : ""), itemlist[i].name_show, itemlist[i].price,
+                                itemlist[i].count, getBpItemCount(username,itemlist[i].name)));
     }
 }
 
