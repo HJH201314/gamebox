@@ -5,12 +5,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <windows.h>
 #include "lib/sqlite3.h"
 #include "global.h"
 
 typedef struct {
-    char name[16];//商品名(英文)
-    char name_show[16];//用于展示的名称
+    char name[16];//用作标识的商品名
+    char name_show[16];//用作展示的商品名
     int price;//商品价格
     int count;//一次购买的份数
 } ShopItem;
@@ -29,6 +30,7 @@ extern char username[129];
 extern sqlite3 *db;
 
 int pageShop() {
+    SetConsoleTitleA("游戏商店");
     initPage();
     initShop();
     selector = 0;
@@ -72,10 +74,11 @@ int pageShop() {
 
 static void initShop() {
     itemcount = 0;
+    selector = 0;
     addItem("life","一线生机", 199, 1);
     addItem("life","一线生机 * 5", 899, 5);
     setLineCenter(2, "商店");
-    setLineCenter(4, formatStr(" %-16s %-5s %-5s %11s", 3, "物品", "价格", "数量",""));
+    setLineCenter(4, formatStr(" %-16s %-5s %-5s %11s", 4, "物品", "价格", "数量",""));
     loadItems();
 }
 

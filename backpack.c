@@ -55,10 +55,10 @@ int getBpItemCount(char *username, char *item) {
     char *sql = "SELECT count FROM backpack WHERE username=? AND item=? LIMIT 1";
     sqlite3_prepare_v2(db, sql, -1, &pStmt, 0);
     if (pStmt == 0)
-        return -1;
+        return 0;
     sqlite3_bind_text(pStmt, 1, username, -1, NULL);
     sqlite3_bind_text(pStmt, 2, item, -1, NULL);
-    int ret = -1;
+    int ret = 0;
     while (sqlite3_step(pStmt) == SQLITE_ROW) {
         ret = sqlite3_column_int(pStmt, 0);
     }

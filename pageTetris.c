@@ -18,13 +18,6 @@ extern int height_flex;
 extern char cWin[HEIGHT][WIDTH];
 extern int freq;
 
-//表示一个堆的信息
-struct block {
-    int x;//左上顶点x
-    int y;//左上顶点y
-    unsigned int shape;//用2字节16位(short其实够了)来表示每一个点
-};
-
 typedef struct linkedBlock {
     int x;//左上顶点x
     int y;//左上顶点y
@@ -32,7 +25,7 @@ typedef struct linkedBlock {
     struct linkedBlock *next;//指向下一个块
 } blocklink;
 
-//局部函数声明
+//函数声明
 static int getKeyPress();
 static void initGame();
 static void clearBlock();
@@ -384,6 +377,8 @@ static void initGame() {//因为全局变量都会复用,必须要初始化
     height_flex = 20;
     //初始化当前块和将来块
     blockhead = initBlocks();
+    //初始化分数
+    score = 0;
 }
 
 //按键处理程序

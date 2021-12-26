@@ -15,10 +15,10 @@ void pageMain(){
     while(1){
         //示例：获取按下的键
         //if(_kbhit()) {//是否有按下键盘 !!!有BUG,如果输入中文标点会导致卡死
-//            ch = _getch();//
-//            setTips(formatStr("key:%c",1,ch));
-//            output();
-// 获取ch移动到后面
+        //            ch = _getch();//
+        //            setTips(formatStr("key:%c",1,ch));
+        //            output();
+        // 获取ch移动到后面
         if (ch == KEY_ESC) goto back;
         else{
             switch(ch){

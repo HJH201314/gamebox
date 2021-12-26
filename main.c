@@ -22,7 +22,7 @@ HASHMAP(char, int) setting_map;//定义一个以char为key,int为value的hashmap
 sqlite3 *db;//数据库
 
 int main() {
-    //控制台光标处理start
+    //控制台光标处理
     HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO CursorInfo;
     GetConsoleCursorInfo(handle, &CursorInfo);//获取控制台光标信息
@@ -31,7 +31,7 @@ int main() {
 
     //初始化数据库
     sqlite3_open_v2("gamebox.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
-    //新建表
+    //创建表
     if (!isTableExist(db, "record")) {//游戏记录
         sqlite3_exec(db,
                      "CREATE TABLE record ( game INTEGER, username TEXT, score INTEGER, points INTEGER, time TEXT (20) ); ",
@@ -78,7 +78,7 @@ int main() {
     setStrFrom(esctip, 1, "按下Esc键退出或返回上级");
 
     //生成随机数种子
-    srand(getpid());
+    srand((unsigned)time(NULL));
 
     //初始化界面
     initPage();
